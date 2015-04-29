@@ -2,7 +2,7 @@
 import java.io.*;
 import java.util.*;
 
-	public class Moves {
+	public class Move {
 		
 		//Variables
 		private String pokemonName;
@@ -14,14 +14,15 @@ import java.util.*;
 		private int[] attackPower = new int[6];
 		private int[] attackHitChance = new int[6];
 		private String[] moves = new String[3];
-		private Random r = new Random();
+		private Random random = new Random();
 
 
-		public Moves(String name){
-			for (i = 0; i++; i<2){
-				moves[i] = r.nextInt(3);
-			}		    
-		    
+		public Move(String name)
+		{
+			for (int i=0; i<2; i++)
+			{
+				moves[i] = random.nextInt(3);
+			}		        
 		}
 
 		public allMoves(String name; int power; int hitChance){
