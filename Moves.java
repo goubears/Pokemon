@@ -18,9 +18,9 @@
 
 
 		public Moves(String name){
-
-		    pokemonName = name;
-		    
+			for (i = 0; i++; i<2){
+				moves[i] = r.nextInt(3);
+			}		    
 		    
 		}
 
