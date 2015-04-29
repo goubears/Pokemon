@@ -29,7 +29,7 @@
 			attack = power;
 		    accuracy = hitChance;
 
-	        if (pokemonName.equals("Evee")){
+	        if (pokemonName.equals("Eevee")){
 	            possibleMoves = {"Quick Attack", "Bite", "Take Down", "Move4", "Move5", "Move6"}; 
 	            attackPower = {40, 60, 100};
 	            attackHitChance = {100, 100, 75};
