@@ -5,7 +5,7 @@ import java.util.*;
 
 public class Pokemon {
 
-	private int MAX_LEVEL = 50;
+	private double MAX_LEVEL = 50;
 
 	private int pokemonName;
 	final private int EEVEE = 1;
