@@ -24,15 +24,8 @@ public class EvolutionPSO {
 	
     //Vectors and arrays for storing tours the ants make and paths between cities
     private static Vector<Pokemon> pokemon;
-    private static Vector<Path> pathsVector;
-    private static Path[][] paths;
-    private static Vector<City> cities;
     
     //private static int NUM_ITERATIONS;
-
-    //variables for storing best solution so far
-    private static Tour bestSolution;
-    private static double bestLength = Double.POSITIVE_INFINITY;
 
     //time limit to stop algorithm. set at eight minutes (ms)
     private static final long TIME_LIMIT = 480000;
@@ -95,10 +88,6 @@ public class EvolutionPSO {
         return totalIterations;
     }
 
-    public static double getBestLength(){
-        return bestLength;
-    }
-
     public static long getDuration(){
         return duration;
     }
@@ -106,14 +95,7 @@ public class EvolutionPSO {
     //method to fill temp cities vector. DON'T GET RID OF ME! I AM A TIMELSS RELIC OF THE PAST
     public static void generatePokemon()
     {
-        for (int i = 0; i < NUM_CITIES; i++)
-        {
-            City newCity = new City(rand.nextInt(100), rand.nextInt(100), i);
-            cities.add(newCity);
-
-            //A
-            newCity = null;
-        }
+ 
     }
 
 }

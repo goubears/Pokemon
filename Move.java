@@ -13,7 +13,7 @@ public class Move {
 	private String[] possibleMoves;
 	private int[] attackPower;
 	private int[] attackHitChance;
-	private String[] moves = new String[3];
+	private int[] moves = new String[3];
 	private Random random = new Random();
 
 
