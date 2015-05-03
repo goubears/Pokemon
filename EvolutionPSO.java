@@ -38,22 +38,64 @@ public class EvolutionPSO {
     private static int totalIterations;
     private static long duration;
 
-    public static void evolutionPSO(Vector<Pokemon> breedingPopulation, int iterations)
-    {
-        //set up variables
-        pokemon = breedingPopulation;
-        NUM_ITERATIONS = iterations;
+    // public static void evolutionPSO(Vector<Pokemon> breedingPopulation, int iterations)
+    // {
+    //     //set up variables
+    //     pokemon = breedingPopulation;
+    //     NUM_ITERATIONS = iterations;
+
+    public static void main (String[] args){
         
+        System.out.println("Entered main function.");
         //start timer
         long startTime = System.currentTimeMillis();
         long endTime = 0;
         duration = 0;
 
-            //update time
-            endTime = System.currentTimeMillis();
-            duration = (endTime - startTime)/1000;
+        //update time
+        endTime = System.currentTimeMillis();
+        duration = (endTime - startTime)/1000;
 
-        
+        //update each Pokemon's stats according to its personal and global bests
+        for (int i = 0; i < pokemon.size(); i++){
+        	pokemon.get(i).moveProbabilities();
+        }
+		
+		//SELECTION
+		//use fitness values to make a roulette wheel (pre-existing java function - google it)
+
+
+		
+		//"spin" the wheel -> an individual will be chosen, and they become parent 1
+		//remove parent 1 from the wheel (1 less individual in the wheel, so all remaining sections of the wheel get proportionally larger to keep the wheel whole)
+		//"spin" the wheel again -> an individual will be chosen, and they become parent 2
+		//remove parent 2 from the wheel
+		//these two are now a mating pair -> store them together for later
+		//continue spinning the wheel and making pairings until the wheel is empty 
+			//if there's an odd number and a single unmated individual is left, then discard it
+		
+		//CROSSOVER
+		//if a random double is below the probability 0.7, then the pair mate to create two babies
+		
+		//determine which baby gets which moves
+			//if both parents have the same move(s), then that move(s) goes to each baby
+			//for the remaining different moves, randomly assign each move to one of the babies until both babies have 3 moves and there are no parent moves remaining 
+		//determine which baby gets which probabilities
+			//random boolean - if true, baby 1 get's probability from parent 1; if false, baby 1 get's probability from parent 2 
+			//baby 2 gets whatever baby 1 doesn't get
+			//do this 3 times for the 3 different probabilities
+		//now that you have each babies' moves and probabilities, pass those values along to the "pokemon baby constructor" (method in pokemon class)
+		
+		//MUTATION
+		//take your newly constructed babies, and (with a probability of 0.01) expose them to mutation (method already in pokemon class)
+		
+		//POPULATION
+		//the new population should all be new babies
+			//do the individuals total up to 100? (initial population level)
+		//if so, great - continue on
+		//if not, select adults to add to the population using a roulette wheel
+			//"spin" the wheel -> an individual will be chosen -> remove them from the wheel and add them to the population
+			//keep selecting individual adults until the new population level equals the initial population amount
 
         //print out our findings
         // System.out.println("\n******************* Elitist Ant Algorithm Results *******************");
