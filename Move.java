@@ -16,19 +16,27 @@ import java.util.*;
 		private String[] moves = new String[3];
 		private Random random = new Random();
 
+		private int attack;
+		private int accuracy;
+		private int identifier;
+		private String moveName;
+
 
 		public Move(String name)
 		{
-			for (int i=0; i<2; i++)
-			{
-				moves[i] = random.nextInt(3);
-			}		        
+			allMoves(name);
+			identifer = random.nextInt(3);
+			attack = attackPower[identifier];
+			accuracy = attackHitChance[identifier];
+			moveName = possibleMoves[identifier];
+
+					        
 		}
 
-		public allMoves(String name; int power; int hitChance){
+		public allMoves(String name){
 			pokemonName = name;
-			attack = power;
-		    accuracy = hitChance;
+			// attack = power;
+		 //    accuracy = hitChance;
 
 	        if (pokemonName.equals("Eevee")){
 	            possibleMoves = {"Quick Attack", "Bite", "Take Down", "Move4", "Move5", "Move6"}; 
@@ -66,4 +74,6 @@ import java.util.*;
 	            attackHitChance = {100, 90, 80};
 	        }
 	    }
+
+	    public void 
 	}
