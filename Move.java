@@ -18,18 +18,13 @@ import java.util.*;
 		private String[] moves = new String[3];
 		private Random random = new Random();
 
-		
-
-
 		public Move(String name)
 		{
 			allMoves(name);
 			identifier = random.nextInt(3);
 			attack = attackPower[identifier];
 			accuracy = attackHitChance[identifier];
-			moveName = possibleMoves[identifier];
-
-					        
+			moveName = possibleMoves[identifier];		        
 		}
 
 		public void allMoves(String name){
@@ -94,5 +89,45 @@ import java.util.*;
             int[] accuracies = {100, 90, 80};
             attackHitChance = accuracies;
         }
+    }
+
+    public int getIdentifier(){
+        return identifier;
+    }
+
+    public void setIdentifier(int i) {
+       identifier = i;
+    }
+    
+    public int getAttack(){
+        return attack;
+    }
+
+    public int setAttack(int at){
+         attack = at;
+    }
+    
+    public int getAccuracy(){
+        return accuracy;
+    }
+
+    public int setAccuracy(int ac){
+         accuracy = ac;
+    }
+    
+    public String getPokemonName(){
+        return pokemonName;
+    }
+
+    public void setPokemonName(String pn) {
+       pokemonName = pn;
+    }
+
+    public String getMoveName(){
+        return moveName;
+    }
+
+    public void setMoveName(String mn) {
+       moveName = mn;
     }
 }
