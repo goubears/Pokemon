@@ -103,7 +103,7 @@ import java.util.*;
         return attack;
     }
 
-    public int setAttack(int at){
+    public void setAttack(int at){
          attack = at;
     }
     
@@ -111,7 +111,7 @@ import java.util.*;
         return accuracy;
     }
 
-    public int setAccuracy(int ac){
+    public void setAccuracy(int ac){
          accuracy = ac;
     }
     
