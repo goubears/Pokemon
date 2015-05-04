@@ -5,6 +5,7 @@ import java.util.*;
 
 public class Pokemon {
 
+	//private Neighborhood neighborhood;
 	private double MAX_LEVEL = 50;
 
 	private int pokemonName;
@@ -95,7 +96,7 @@ public class Pokemon {
 	private Move move2;
 	private Move move3;
 
-	private Neighborhood neighborhood;
+	//private Neighborhood neighborhood;
 
 	private double fitness;
 	private double personalBest;
@@ -163,7 +164,7 @@ public class Pokemon {
 		}	
 
 		//given move combo, assign to the appropriate neighborhood...
-		neighborhood = getNeighborhood(move1, move2, move3);
+		//neighborhood = getNeighborhood(move1, move2, move3);
 
 		fitness = 0;
 		personalBest = 0;
@@ -205,7 +206,7 @@ public class Pokemon {
 		move3 = parentMove3;
 
 		//given move combo, assign to the appropriate neighborhood...
-		neighborhood = getNeighborhood(move1, move2, move3);
+		//neighborhood = getNeighborhood(move1, move2, move3);
 
 		fitness = 0;
 		personalBest = 0;
@@ -262,10 +263,10 @@ public class Pokemon {
 	/*
 	 * STILL NEED TO CODE:
 	 */
-	private Neighborhood getNeighborhood(Move firstMove, Move secondMove, Move thirdMove) 
-	{
-		return null;
-	}
+	//private Neighborhood getNeighborhood(Move firstMove, Move secondMove, Move thirdMove) 
+	// {
+	// 	return null;
+	// }
 
 	public void powerUp()
 	{
