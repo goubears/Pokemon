@@ -23,7 +23,7 @@ import java.util.Random;
 public class EvolutionPSO {
 	
     //Vectors and arrays for storing tours the ants make and paths between cities
-    private static Vector<Pokemon> pokemon;
+    private static Vector<Pokemon> pokemon = new Vector<Pokemon>();
     
     //private static int NUM_ITERATIONS;
 
@@ -35,6 +35,7 @@ public class EvolutionPSO {
 
     //named constants assigned upon receiving parameters
     private static int NUM_ITERATIONS = 50;
+    private static int POPULATION_SIZE = 100;
     private static int totalIterations;
     private static long duration;
 
@@ -56,13 +57,35 @@ public class EvolutionPSO {
         endTime = System.currentTimeMillis();
         duration = (endTime - startTime)/1000;
 
+        generatePokemon();
+
+        //PSO HERE, NEED NEIGHBORHOODS TO BE FINISHED
         //update each Pokemon's stats according to its personal and global bests
-        for (int i = 0; i < pokemon.size(); i++){
-        	pokemon.get(i).moveProbabilities();
-        }
+        // for (int i = 0; i < pokemon.size(); i++){
+        // 	pokemon.get(i).moveProbabilities();
+        // }
 		
-		//SELECTION
-		//use fitness values to make a roulette wheel (pre-existing java function - google it)
+		//put Pokemon fitness values into RouletteWheel for roulette selection
+        ArrayList<Double> fitnesses = new ArrayList<Double>();
+        for (int i = 0; i < POPULATION_SIZE; i++){
+            fitnesses.add(pokemon.get(i).getFitness());
+        }
+
+        RouletteWheel wheel = new RouletteWheel(fitnesses);
+        ArrayList<Pokemon> breedingPool = new ArrayList<Pokemon>();
+
+        //spin wheel to create breeding pairs. If odd number, don't select last individual
+        while(wheel.size() > 1){
+
+            int selectionIndex = wheel.selectAndRemove();
+            breedingPool.add(pokemon.get(selectionIndex));
+            int secondIndex = wheel.selectAndRemove();
+            breedingPool.add(pokemon.get(selectionIndex));
+            System.out.println("Wheel size: " + wheel.size());
+            System.out.println("Selected index: " + selectionIndex);
+            System.out.println("Breeding pool size: " + breedingPool.size());
+            System.out.println();
+        }
 
 
 		
@@ -137,6 +160,19 @@ public class EvolutionPSO {
     //method to fill temp cities vector. DON'T GET RID OF ME! I AM A TIMELSS RELIC OF THE PAST
     public static void generatePokemon()
     {
+        int NAME = 5;
+        Move myMove = new Move("Eevee");
+        Move[] testMoves = myMove.getPossibleMoves(NAME);
+
+
+        for (int i = 0; i < POPULATION_SIZE; i++){
+            //generate Eevee, give it random fitness
+            Pokemon testPokemon = new Pokemon(1, 5, testMoves);
+            double randomFitness = rand.nextDouble()*100;
+            testPokemon.setFitness(randomFitness);
+            pokemon.add(testPokemon);
+            System.out.println("Fitness of Pokemon " + i + ": " + testPokemon.getFitness());
+        }
  
     }
 

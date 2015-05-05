@@ -475,6 +475,9 @@ public class Pokemon {
 	public double getMaxDefense(){
 		return maxDefense;
 	}
+	public void setFitness(double fit){
+		fitness = fit;
+	}
 /*
 private int level;
 	private int battlesWon;
