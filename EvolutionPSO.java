@@ -24,8 +24,15 @@ public class EvolutionPSO {
 	
     //Vectors and arrays for storing tours the ants make and paths between cities
     private static Vector<Pokemon> pokemon = new Vector<Pokemon>();
+    private static Vector<Pokemon> newGeneration = new Vector<Pokemon>();
+
+    private static final int NUM_MOVES = 3;
+    private static final int NUM_PROBABILITIES = 3;
+
     
     //private static int NUM_ITERATIONS;
+    private static final double CROSSOVER_PROBABILITY = 0.7;
+    private static final double MUTATION_PROBABILITY = 0.01;
 
     //time limit to stop algorithm. set at eight minutes (ms)
     private static final long TIME_LIMIT = 480000;
@@ -36,13 +43,15 @@ public class EvolutionPSO {
     //named constants assigned upon receiving parameters
     private static int NUM_ITERATIONS = 50;
     private static int POPULATION_SIZE = 100;
+    private static int ALGORITHM = 5;
     private static int totalIterations;
     private static long duration;
 
-    // public static void evolutionPSO(Vector<Pokemon> breedingPopulation, int iterations)
+    // public static void evolutionPSO(Vector<Pokemon> breedingPopulation, int algo)
     // {
     //     //set up variables
     //     pokemon = breedingPopulation;
+    //     ALGORITHM = algo;
     //     NUM_ITERATIONS = iterations;
 
     public static void main (String[] args){
@@ -73,44 +82,54 @@ public class EvolutionPSO {
 
         RouletteWheel wheel = new RouletteWheel(fitnesses);
         ArrayList<Pokemon> breedingPool = new ArrayList<Pokemon>();
+        ArrayList<Pokemon> tempPopulation = new ArrayList<Pokemon>();
+
+        //copy pokemon into tempPopulation
+        for (int i = 0; i < POPULATION_SIZE; i++){
+            tempPopulation.add(pokemon.get(i));
+        }
 
         //spin wheel to create breeding pairs. If odd number, don't select last individual
         while(wheel.size() > 1){
 
             int selectionIndex = wheel.selectAndRemove();
-            breedingPool.add(pokemon.get(selectionIndex));
+            breedingPool.add(tempPopulation.get(selectionIndex));
+            tempPopulation.remove(selectionIndex);
             int secondIndex = wheel.selectAndRemove();
-            breedingPool.add(pokemon.get(selectionIndex));
-            System.out.println("Wheel size: " + wheel.size());
-            System.out.println("Selected index: " + selectionIndex);
-            System.out.println("Breeding pool size: " + breedingPool.size());
-            System.out.println();
+            breedingPool.add(tempPopulation.get(secondIndex));
+            tempPopulation.remove(secondIndex);
+            // System.out.println("Wheel size: " + wheel.size());
+            // System.out.println("Selected index: " + selectionIndex);
+            // System.out.println("Breeding pool size: " + breedingPool.size());
+            // System.out.println();
+
+            // System.out.println("Parent index: " + selectionIndex);
+            // pokemon.get(selectionIndex).print();
+            // System.out.println("Parent index: " + secondIndex);
+            // pokemon.get(secondIndex).print();
+
         }
 
+        //test print
+        for (int i = 0; i < breedingPool.size(); i++){
+            //breedingPool.get(i).print();
+        }
 
-		
-		//"spin" the wheel -> an individual will be chosen, and they become parent 1
-		//remove parent 1 from the wheel (1 less individual in the wheel, so all remaining sections of the wheel get proportionally larger to keep the wheel whole)
-		//"spin" the wheel again -> an individual will be chosen, and they become parent 2
-		//remove parent 2 from the wheel
-		//these two are now a mating pair -> store them together for later
-		//continue spinning the wheel and making pairings until the wheel is empty 
-			//if there's an odd number and a single unmated individual is left, then discard it
-		
-		//CROSSOVER
-		//if a random double is below the probability 0.7, then the pair mate to create two babies
-		
-		//determine which baby gets which moves
-			//if both parents have the same move(s), then that move(s) goes to each baby
-			//for the remaining different moves, randomly assign each move to one of the babies until both babies have 3 moves and there are no parent moves remaining 
-		//determine which baby gets which probabilities
-			//random boolean - if true, baby 1 get's probability from parent 1; if false, baby 1 get's probability from parent 2 
-			//baby 2 gets whatever baby 1 doesn't get
-			//do this 3 times for the 3 different probabilities
-		//now that you have each babies' moves and probabilities, pass those values along to the "pokemon baby constructor" (method in pokemon class)
+        //loop through breeding pairs, make have each make two babies
+        for (int i = 0; i < breedingPool.size(); i = i + 2){
+            System.out.println("Index: " + i);
+            makeBabies(breedingPool.get(i), breedingPool.get(i + 1));
+
+            // breedingPool.get(i).print();
+            // breedingPool.get(i + 1).print();
+
+        }
 		
 		//MUTATION
-		//take your newly constructed babies, and (with a probability of 0.01) expose them to mutation (method already in pokemon class)
+		for (int i = 0; i < breedingPool.size(); i++){
+            //breedingPopulation.get(i).mutuate()
+
+        }
 		
 		//POPULATION
 		//the new population should all be new babies
@@ -149,6 +168,94 @@ public class EvolutionPSO {
 
     }
 
+    public static void makeBabies(Pokemon parentOne, Pokemon parentTwo){
+
+        //generate random double to see if they will mate
+        double randomDouble = rand.nextDouble();
+        if (randomDouble > CROSSOVER_PROBABILITY){
+            return;
+            //They don't seem to like one another.
+        }
+
+        // parentOne.print();
+        // parentTwo.print();
+
+        Move[] babyOneMoves = new Move[NUM_MOVES];
+        Move[] babyTwoMoves = new Move[NUM_MOVES];
+        Move[] parentOneMoves = parentOne.getMovesArray();
+        Move[] parentTwoMoves = parentTwo.getMovesArray();
+        double[] babyOneProbabilities = new double[NUM_PROBABILITIES];
+        double[] babyTwoProbabilities = new double[NUM_PROBABILITIES];
+        double[] parentOneProbabilities = parentOne.getProbabilitiesArray();
+        double[] parentTwoProbabilities = parentTwo.getProbabilitiesArray();
+
+        //TEST PRINT
+        // for (int i = 0; i < NUM_PROBABILITIES; i++){
+        //     System.out.println("Parent one probability: " + parentOneProbabilities[i]);
+        //     System.out.println("Parent two probability: " + parentTwoProbabilities[i]);
+        // }
+
+        Boolean[] movesAssigned = new Boolean[NUM_MOVES];
+        //if parents share a move, both babies learn it
+        for (int i = 0; i < NUM_MOVES; i++){
+            Move curr = parentOneMoves[i];
+            for (int j = 0; j < NUM_MOVES; j++){
+                if (curr.getMoveName().equals(parentTwoMoves[j].getMoveName())){
+                    babyOneMoves[i] = curr;
+                    babyTwoMoves[i] = curr;
+                    movesAssigned[i] = true;
+
+                    System.out.println("Matched move: " + curr.getMoveName());
+                }
+            }
+        }       
+        //assign remaining moves randomly
+        for (int i = 0; i < NUM_MOVES; i++){
+            while (movesAssigned[i] == false){
+
+                Move newMove = new Move(parentOne.getName());
+                for (int j = 0; j < NUM_MOVES; j++){
+                    if (babyOneMoves[j] != null && !babyOneMoves[j].getMoveName().equals(newMove.getMoveName())){
+                        babyOneMoves[i] = newMove;
+                        babyTwoMoves[i] = newMove;
+                        movesAssigned[i] = true;
+
+                        System.out.println("Move " + i + " assigned randomly.");
+                    }
+                }    
+            }
+        }
+
+        //for each probability, generate a random boolean. if true, babyOne gets that probability, babyTwo gets the opposite
+        for (int i = 0; i < NUM_PROBABILITIES; i++){
+            boolean randomBoolean = rand.nextBoolean();
+            if (randomBoolean == true){
+                babyOneProbabilities[i] = parentOneProbabilities[i];
+                babyTwoProbabilities[i] = parentTwoProbabilities[i];
+                // System.out.println("Random boolean: true");
+                // System.out.println("Parent one probability: " + parentOneProbabilities[i]);
+                // System.out.println("Parent two probability: " + parentTwoProbabilities[i]);
+            }
+            else{
+                babyOneProbabilities[i] = parentTwoProbabilities[i];
+                babyTwoProbabilities[i] = parentOneProbabilities[i];
+                // System.out.println("Random boolean: false.");
+                // System.out.println("Parent one probability: " + parentOneProbabilities[i]);
+                // System.out.println("Parent two probability: " + parentTwoProbabilities[i]);
+            }
+        }
+
+        //create and assign baby pokemon!
+        Pokemon firstBaby = new Pokemon(parentOne.getName(), parentOne.getLevel(), parentTwo.getLevel(), ALGORITHM, babyOneProbabilities[0], babyOneProbabilities[1], babyOneProbabilities[2], babyOneMoves[0], babyOneMoves[1], babyOneMoves[2]);
+        Pokemon secondBaby = new Pokemon(parentOne.getName(), parentOne.getLevel(), parentTwo.getLevel(), ALGORITHM, babyTwoProbabilities[0], babyTwoProbabilities[1], babyTwoProbabilities[2], babyTwoMoves[0], babyTwoMoves[1], babyTwoMoves[2]);
+
+        firstBaby.print();
+        secondBaby.print();
+
+        newGeneration.add(firstBaby);
+        newGeneration.add(secondBaby);
+    }
+
     public static int getTotalIterations(){
         return totalIterations;
     }
@@ -160,7 +267,7 @@ public class EvolutionPSO {
     //method to fill temp cities vector. DON'T GET RID OF ME! I AM A TIMELSS RELIC OF THE PAST
     public static void generatePokemon()
     {
-        int NAME = 5;
+        int NAME = 1;
         Move myMove = new Move("Eevee");
         Move[] testMoves = myMove.getPossibleMoves(NAME);
 
@@ -171,7 +278,7 @@ public class EvolutionPSO {
             double randomFitness = rand.nextDouble()*100;
             testPokemon.setFitness(randomFitness);
             pokemon.add(testPokemon);
-            System.out.println("Fitness of Pokemon " + i + ": " + testPokemon.getFitness());
+            //testPokemon.print();
         }
  
     }

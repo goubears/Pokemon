@@ -34,6 +34,43 @@ import java.util.*;
 			moveName = possibleMoves[identifier];		        
 		}
 
+        public Move(int name){
+
+            String nameOfPokemon;
+            //find appropriate name
+            if (name == 1){
+                allMoves("Eevee");
+                nameOfPokemon = "Eevee";
+            }
+            else if (name == 2){
+                allMoves("Pikachu");
+                nameOfPokemon = "Pikachu";
+            }
+            else if (name == 3){
+                allMoves("Charmander");
+                nameOfPokemon = "Charmander";
+            }
+            else if (name == 4){
+                allMoves("Meowth");
+                nameOfPokemon = "Meowth";
+            }
+            else if (name == 5){
+                allMoves("Houndour");
+                nameOfPokemon = "Houndour";
+            }
+            else{
+                allMoves("Koffing");
+                nameOfPokemon = "Koffing";
+            }
+
+            allMoves(nameOfPokemon);
+            identifier = random.nextInt(3);
+            attack = attackPower[identifier];
+            accuracy = attackHitChance[identifier];
+            moveName = possibleMoves[identifier];
+
+        }
+
         public Move(String name, int moveIdentifier){
 
             allMoves(name);

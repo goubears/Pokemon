@@ -91,10 +91,12 @@ public class Pokemon {
 	private double healthProbability;
 	private double attackProbability;
 	private double defenseProbability;
+	private double[] probabilitiesArray = new double[3];
 
 	private Move move1;
 	private Move move2;
 	private Move move3;
+	private Move[] movesArray = new Move[3];
 
 	//private Neighborhood neighborhood;
 
@@ -168,6 +170,14 @@ public class Pokemon {
 
 		fitness = 0;
 		personalBest = 0;
+
+		movesArray[0] = move1;
+		movesArray[1] = move2;
+		movesArray[2] = move3;
+
+		probabilitiesArray[0] = healthProbability;
+		probabilitiesArray[1] = attackProbability;
+		probabilitiesArray[2] = defenseProbability;
 	}
 
 	//new baby (result of crossover) constructor 
@@ -210,6 +220,15 @@ public class Pokemon {
 
 		fitness = 0;
 		personalBest = 0;
+
+
+		movesArray[0] = move1;
+		movesArray[1] = move2;
+		movesArray[2] = move3;
+
+		probabilitiesArray[0] = healthProbability;
+		probabilitiesArray[1] = attackProbability;
+		probabilitiesArray[2] = defenseProbability;
 	}
 
 	public void updateStats()
@@ -424,6 +443,22 @@ public class Pokemon {
 		}
 	}
 
+	public void print(){
+		System.out.println("Pokemon name: " + pokemonName);
+		System.out.println("Level: " + level);
+		System.out.println("Health: " + maxHealth);
+		System.out.println("Attack: " + maxAttack);
+		System.out.println("Defense:" + maxDefense);
+		System.out.println("Health probability: " + healthProbability);
+		System.out.println("Attack probability: " + attackProbability);
+		System.out.println("Defense probability: " + defenseProbability);
+		System.out.println("Fitness: " + fitness);
+		System.out.println("Move 1: " + move1.getMoveName());
+		System.out.println("Move 2: " + move2.getMoveName());
+		System.out.println("Move 3: " + move3.getMoveName());
+		System.out.println();
+	}
+
 	public Move getMoveOne(){
 		return move1;
 	}
@@ -477,6 +512,12 @@ public class Pokemon {
 	}
 	public void setFitness(double fit){
 		fitness = fit;
+	}
+	public Move[] getMovesArray(){
+		return movesArray;
+	}
+	public double[] getProbabilitiesArray(){
+		return probabilitiesArray;
 	}
 /*
 private int level;
