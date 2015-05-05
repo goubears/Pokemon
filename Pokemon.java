@@ -104,7 +104,7 @@ public class Pokemon {
 	//random number generator
 	Random random = new Random();
 
-	//initial constructor
+	//initial constructor. TO GENERATE POKEMON, CREATE INSTANCE OF MOVE myMove AND CALL Pokemon(INT_NAME, ALGORITHM, myMove.getPossibleMoves(INT_NAME)) - AMS
 	public Pokemon(int typeOfPokemon, int algorithm, Move[] possibleMoves)
 	{
 		pokemonName = typeOfPokemon;
@@ -424,4 +424,81 @@ public class Pokemon {
 		}
 	}
 
+	public Move getMoveOne(){
+		return move1;
+	}
+	public Move getMoveTwo(){
+		return move2;
+	}
+	public Move getMoveThree(){
+		return move3;
+	}
+	public int getLevel(){
+		return level;
+	}
+	public int getBattlesWon(){
+		return battlesWon;
+	}
+	public double getHealth(){
+		return health;
+	}
+	public double getAttack(){
+		return attack;
+	}
+	public double getDefense(){
+		return defense;
+	}
+	public double getHealthProbability(){
+		return healthProbability;
+	}
+	public double getAttackProbability(){
+		return attackProbability;
+	}
+	public double getDefenseProbability(){
+		return defenseProbability;
+	}
+	public double getFitness(){
+		return fitness;
+	}
+	public double getPersonalBest(){
+		return personalBest;
+	}
+	public int getName(){
+		return pokemonName;
+	}
+	public double getMaxHealth(){
+		return maxHealth;
+	}
+	public double getMaxAttack(){
+		return maxAttack;
+	}
+	public double getMaxDefense(){
+		return maxDefense;
+	}
+/*
+private int level;
+	private int battlesWon;
+	private int levelUpThreshold;
+
+	private double health;
+	private double attack;
+	private double defense;
+
+	private double maxHealth;
+	private double maxAttack;
+	private double maxDefense;
+
+	private double healthProbability;
+	private double attackProbability;
+	private double defenseProbability;
+
+	private Move move1;
+	private Move move2;
+	private Move move3;
+
+	//private Neighborhood neighborhood;
+
+	private double fitness;
+	private double personalBest;
+	*/
 }

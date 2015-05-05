@@ -4,6 +4,50 @@ public class Main {
 	//main method
 	public static void main(String[] args) 
 	{
+		int NAME = 5;
+		Move myMove = new Move("Eevee");
+		Move[] testMoves = myMove.getPossibleMoves(NAME);
+		
+
+		for (Move m : testMoves){
+			System.out.println("Pokemon name: " + m.getPokemonName());
+			System.out.println("Move name: " + m.getMoveName());
+			System.out.println("Attack: " + m.getAttack());
+			System.out.println("Accuracy: " + m.getAccuracy());
+			System.out.println();
+		}
+
+		//test Pokemon creation
+		// Pokemon testPokemon = new Pokemon(1, 5, testMoves);
+		// System.out.println("Pokemon name" + testPokemon.getName());
+		// System.out.println("Level: " + testPokemon.getLevel());
+		// System.out.println("Health: " + testPokemon.getMaxHealth());
+		// System.out.println("Attack: " + testPokemon.getMaxAttack());
+		// System.out.println("Defense:" + testPokemon.getMaxDefense());
+		// System.out.println("Health probability: " + testPokemon.getHealthProbability());
+		// System.out.println("Attack probability: " + testPokemon.getAttackProbability());
+		// System.out.println("Defense probability: " + testPokemon.getDefenseProbability());
+		// System.out.println("Fitness: " + testPokemon.getFitness());
+
+		//test Pokemon creation
+		Pokemon testPokemon = new Pokemon(NAME, 5, 7, 5, 0.33, 0.33, 0.34, testMoves[0], testMoves[1], testMoves[2]);
+		System.out.println("Pokemon name: " + testPokemon.getName());
+		System.out.println("Level: " + testPokemon.getLevel());
+		System.out.println("Health: " + testPokemon.getMaxHealth());
+		System.out.println("Attack: " + testPokemon.getMaxAttack());
+		System.out.println("Defense:" + testPokemon.getMaxDefense());
+		System.out.println("Health probability: " + testPokemon.getHealthProbability());
+		System.out.println("Attack probability: " + testPokemon.getAttackProbability());
+		System.out.println("Defense probability: " + testPokemon.getDefenseProbability());
+		System.out.println("Fitness: " + testPokemon.getFitness());
+
+
+
+		// public Pokemon(int typeOfPokemon, int parent1Level, int parent2Level, int algorithm, 
+		// 	double parentHealthProbability, double parentAttackProbability, double parentDefenseProbability, 
+		// 	Move parentMove1, Move parentMove2, Move parentMove3)
+
+
 		//create an initial population of 100 eevee's
 		
 		//START OF CYCLE

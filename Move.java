@@ -11,6 +11,13 @@ import java.util.*;
 		private int identifier;
 		private String moveName;
 
+        final private int EEVEE = 1;
+        final private int PIKACHU = 2;
+        final private int CHARMANDER = 3;
+        final private int MEOWTH = 4;
+        final private int HOUNDOUR = 5;
+        final private int KOFFING = 6;
+
 		//Move list
 		private String[] possibleMoves = new String[6];
 		private int[] attackPower = new int[6];
@@ -26,6 +33,56 @@ import java.util.*;
 			accuracy = attackHitChance[identifier];
 			moveName = possibleMoves[identifier];		        
 		}
+
+        public Move(String name, int moveIdentifier){
+
+            allMoves(name);
+            identifier = moveIdentifier;
+            attack = attackPower[identifier];
+            accuracy = attackHitChance[identifier];
+            moveName = possibleMoves[identifier]; 
+        }
+
+        public Move[] getPossibleMoves(int name){
+
+            String nameOfPokemon;
+            //find appropriate name
+            if (name == 1){
+                allMoves("Eevee");
+                nameOfPokemon = "Eevee";
+            }
+            else if (name == 2){
+                allMoves("Pikachu");
+                nameOfPokemon = "Pikachu";
+            }
+            else if (name == 3){
+                allMoves("Charmander");
+                nameOfPokemon = "Charmander";
+            }
+            else if (name == 4){
+                allMoves("Meowth");
+                nameOfPokemon = "Meowth";
+            }
+            else if (name == 5){
+                allMoves("Houndour");
+                nameOfPokemon = "Houndour";
+            }
+            else{
+                allMoves("Koffing");
+                nameOfPokemon = "Koffing";
+            }
+
+            Move[] possible = new Move[3];
+            //construct array of possible moves for Pokemon constructor
+            for (int i = 0; i < 3; i++){
+
+                Move nextMove = new Move(nameOfPokemon, i);
+                possible[i] = nextMove;
+
+            }
+
+            return possible;  
+        }
 
 		public void allMoves(String name){
 			pokemonName = name;
