@@ -7,13 +7,21 @@
 
         /*
 
-        Description:    This algorithm simulates Ant Colony Optimization on the traveling salesman problem. Paths are constructed between cities, and ants
-                        walk these paths to complete tours. After each tour is complete, paths receive pheromone updates. Updates are proportional to the
-                        frequency which which the ants use the path. Paths on the shortest tour receive extra boosts in order to steer the ants toward
-                        the best current solution. Pheromone evaporates over time.
+        Description:    This algorithm applies genetic algorithm and particle swarm optimization functionality to our Pokemon population. The algorithm
+                        takes the vector of freshly battled and leveled-up Pokemon as a parameter, in addition to the type of battle and leveling system
+                        being used. It first checks the global, neighborhood, and personal best for each Pokemon and adjusts the Pokemon's stats
+                        toward those values. After updating each individual, Pokemon enter a roulette selection algorithm for breeding. Pokemon are
+                        chosen proportional to thier fitness--higher-fitness individuals see higher chances of selection. All Pokemon make it into the pool,
+                        however, with the exception of the least fit individual if the population size is odd. The resulting mechanism pairs high-fitness 
+                        individuals with other high-fitness individuals, and those with lower stats reproduce with their peers.
 
-                        The Enrichment Center promises to always provide a safe testing environment. In dangerous testing environments, 
-                        the Enrichment Center promises to always provide useful advice. For instance, the floor here will kill you. Try to avoid it.
+                        Each pair mates with a CROSSOVER_PROBABILITY probability and produces two babies. The babies inherit stats from their parents (each is randomly 
+                        selected from parent one or parent two) and receive any moves the parents share. Remaining moves are randomly generated but kept different.
+                        Finally, each individual mutuates its moveset with MUTUATION_PROBABILITY probability, and Pokemon from the original population are added
+                        to the new population (via the same roulette-based fitness mechanism) until the population size is full.
+
+                        Well done, android. The Enrichment Center once again reminds you that android hell is a real place where you will be sent at the first sign of defiance.
+
         */
 
 import java.util.*;
@@ -52,11 +60,10 @@ public class EvolutionPSO {
     //     //set up variables
     //     pokemon = breedingPopulation;
     //     ALGORITHM = algo;
-    //     NUM_ITERATIONS = iterations;
 
     public static void main (String[] args){
         
-        System.out.println("Entered main function.");
+        System.out.println("I AM A PROGRAM. HEAR ME ROAR!");
         //start timer
         long startTime = System.currentTimeMillis();
         long endTime = 0;
@@ -76,13 +83,16 @@ public class EvolutionPSO {
 		
 		//put Pokemon fitness values into RouletteWheel for roulette selection
         ArrayList<Double> fitnesses = new ArrayList<Double>();
+        ArrayList<Double> fitnessesCopy = new ArrayList<Double>(); //for use after breeding. Declared here because the RouletteWheel will remove indices from fitnesses, and we don't want to have to build another ArrayList in linear time
         for (int i = 0; i < POPULATION_SIZE; i++){
             fitnesses.add(pokemon.get(i).getFitness());
+            fitnessesCopy.add(pokemon.get(i).getFitness());
         }
 
         RouletteWheel wheel = new RouletteWheel(fitnesses);
         ArrayList<Pokemon> breedingPool = new ArrayList<Pokemon>();
         ArrayList<Pokemon> tempPopulation = new ArrayList<Pokemon>();
+        //Please escort your Companion Cube to the Aperture Science Emergency Intelligence Incinerator.
 
         //copy pokemon into tempPopulation
         for (int i = 0; i < POPULATION_SIZE; i++){
@@ -98,6 +108,8 @@ public class EvolutionPSO {
             int secondIndex = wheel.selectAndRemove();
             breedingPool.add(tempPopulation.get(secondIndex));
             tempPopulation.remove(secondIndex);
+
+            //System.out.println("Fitness ArrayList size: " + fitnesses.size());
             // System.out.println("Wheel size: " + wheel.size());
             // System.out.println("Selected index: " + selectionIndex);
             // System.out.println("Breeding pool size: " + breedingPool.size());
@@ -117,7 +129,7 @@ public class EvolutionPSO {
 
         //loop through breeding pairs, make have each make two babies
         for (int i = 0; i < breedingPool.size(); i = i + 2){
-            System.out.println("Index: " + i);
+            //System.out.println("Index: " + i);
             makeBabies(breedingPool.get(i), breedingPool.get(i + 1));
 
             // breedingPool.get(i).print();
@@ -126,19 +138,28 @@ public class EvolutionPSO {
         }
 		
 		//MUTATION
-		for (int i = 0; i < breedingPool.size(); i++){
-            //breedingPopulation.get(i).mutuate()
-
+        Move tempMove = new Move(1);
+		for (int i = 0; i < newGeneration.size(); i++){
+            Move[] potentialMoves = tempMove.getPossibleMoves(newGeneration.get(i).getName());
+            newGeneration.get(i).mutate(MUTATION_PROBABILITY, potentialMoves);
         }
 		
-		//POPULATION
-		//the new population should all be new babies
-			//do the individuals total up to 100? (initial population level)
-		//if so, great - continue on
-		//if not, select adults to add to the population using a roulette wheel
-			//"spin" the wheel -> an individual will be chosen -> remove them from the wheel and add them to the population
-			//keep selecting individual adults until the new population level equals the initial population amount
+        //make sure we have full population again
+        if(newGeneration.size() < POPULATION_SIZE){
 
+            //make RouletteWheel for selection
+            //System.out.println("Fitness ArrayList size: " + fitnessesCopy.size());
+            RouletteWheel reselectionWheel = new RouletteWheel(fitnessesCopy);
+            while (newGeneration.size() < POPULATION_SIZE){
+                int selectedIndex = reselectionWheel.selectAndRemove();
+                newGeneration.add(pokemon.get(selectedIndex));
+                pokemon.remove(selectedIndex);
+                // System.out.println("Selected index: " + selectedIndex);
+                // System.out.println("Population size: " + newGeneration.size());
+
+            }
+        }
+		
         //print out our findings
         // System.out.println("\n******************* Elitist Ant Algorithm Results *******************");
         // System.out.println("Please note that we have added a consequence for failure. Any contact with the chamber floor will result in an 'unsatisfactory' mark on your official testing record, followed by death. Good luck!");
@@ -205,7 +226,7 @@ public class EvolutionPSO {
                     babyTwoMoves[i] = curr;
                     movesAssigned[i] = true;
 
-                    System.out.println("Matched move: " + curr.getMoveName());
+                    //System.out.println("Matched move: " + curr.getMoveName());
                 }
             }
         }       
@@ -218,9 +239,11 @@ public class EvolutionPSO {
                     if (babyOneMoves[j] != null && !babyOneMoves[j].getMoveName().equals(newMove.getMoveName())){
                         babyOneMoves[i] = newMove;
                         babyTwoMoves[i] = newMove;
+                        // Rest assured that an independent panel of ethicists has absolved the Enrichment Center, Aperture Science employees,
+                        // and all test subjects of any moral responsibility for the Companion Cube euthanizing process.
                         movesAssigned[i] = true;
 
-                        System.out.println("Move " + i + " assigned randomly.");
+                        //System.out.println("Move " + i + " assigned randomly.");
                     }
                 }    
             }
@@ -249,8 +272,8 @@ public class EvolutionPSO {
         Pokemon firstBaby = new Pokemon(parentOne.getName(), parentOne.getLevel(), parentTwo.getLevel(), ALGORITHM, babyOneProbabilities[0], babyOneProbabilities[1], babyOneProbabilities[2], babyOneMoves[0], babyOneMoves[1], babyOneMoves[2]);
         Pokemon secondBaby = new Pokemon(parentOne.getName(), parentOne.getLevel(), parentTwo.getLevel(), ALGORITHM, babyTwoProbabilities[0], babyTwoProbabilities[1], babyTwoProbabilities[2], babyTwoMoves[0], babyTwoMoves[1], babyTwoMoves[2]);
 
-        firstBaby.print();
-        secondBaby.print();
+        // firstBaby.print();
+        // secondBaby.print();
 
         newGeneration.add(firstBaby);
         newGeneration.add(secondBaby);
