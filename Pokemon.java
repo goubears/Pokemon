@@ -359,9 +359,6 @@ public class Pokemon {
 		}
 	}
 
-	/*
-	 * STILL NEED TO CODE
-	 */
 	public void moveProbabilities(Pokemon neighborhoodBest)
 	{
 

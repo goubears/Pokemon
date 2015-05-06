@@ -80,10 +80,29 @@ public class EvolutionPSO {
 
         //PSO HERE, NEED NEIGHBORHOODS TO BE FINISHED
         neighborhood.assignNeighborhood(pokemon);
+
         //update each Pokemon's stats according to its personal and global bests
-        // for (int i = 0; i < pokemon.size(); i++){
-        // 	pokemon.get(i).moveProbabilities();
-        // }
+        Vector<Integer> currNeighborhood;
+        for (int i = 0; i < pokemon.size(); i++){
+            //currNeighborhood = neighborhood.getNeighborhood(i);
+            //System.out.println("Neighborhood size: " + currNeighborhood.size());
+
+            ///*
+            //find neighborhood best
+            double highestFitness = Double.NEGATIVE_INFINITY;
+            int bestIndex = -1;
+            for (int j = 0; j < currNeighborhood.size(); j++){
+                double currFitness = pokemon.get(currNeighborhood.get(j)).getFitness();
+                if(currFitness > highestFitness){
+                    highestFitness = currFitness;
+                    bestIndex = currNeighborhood.get(j);
+                }
+            }
+
+            //update pokemon
+            pokemon.get(i).moveProbabilities(pokemon.get(currNeighborhood.get(bestIndex)));
+            //*/
+        }
 		
 		//put Pokemon fitness values into RouletteWheel for roulette selection
         ArrayList<Double> fitnesses = new ArrayList<Double>();
