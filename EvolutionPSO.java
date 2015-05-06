@@ -34,6 +34,7 @@ public class EvolutionPSO {
     private static Vector<Pokemon> pokemon = new Vector<Pokemon>();
     private static Vector<Pokemon> newGeneration = new Vector<Pokemon>();
 
+    //named constants for Pokemon and Move parameters
     private static final int NUM_MOVES = 3;
     private static final int NUM_PROBABILITIES = 3;
 
@@ -58,7 +59,7 @@ public class EvolutionPSO {
     //instance of Neighborhood to call appropriate methods
     private static Neighborhood neighborhood = new Neighborhood();
 
-    // public static void evolutionPSO(Vector<Pokemon> breedingPopulation, int algo)
+    // public static Vector<Pokemon> evolutionPSO(Vector<Pokemon> breedingPopulation, int algo)
     // {
     //     //set up variables
     //     pokemon = breedingPopulation;
@@ -78,16 +79,16 @@ public class EvolutionPSO {
 
         generatePokemon();
 
-        //PSO HERE, NEED NEIGHBORHOODS TO BE FINISHED
+        //initialize neighborhoods structures for Particle Swarm Optimization techniques
         neighborhood.assignNeighborhood(pokemon);
 
         //update each Pokemon's stats according to its personal and global bests
         Vector<Integer> currNeighborhood;
         for (int i = 0; i < pokemon.size(); i++){
-            //currNeighborhood = neighborhood.getNeighborhood(i);
+            currNeighborhood = neighborhood.getNeighborhood(i);
             //System.out.println("Neighborhood size: " + currNeighborhood.size());
 
-            ///*
+            
             //find neighborhood best
             double highestFitness = Double.NEGATIVE_INFINITY;
             int bestIndex = -1;
@@ -100,8 +101,11 @@ public class EvolutionPSO {
             }
 
             //update pokemon
+            // System.out.println("Before update:");
+            // pokemon.get(i).print();
             pokemon.get(i).moveProbabilities(pokemon.get(currNeighborhood.get(bestIndex)));
-            //*/
+            // System.out.println("After update:");
+            // pokemon.get(i).print();
         }
 		
 		//put Pokemon fitness values into RouletteWheel for roulette selection
@@ -182,6 +186,8 @@ public class EvolutionPSO {
 
             }
         }
+
+        //return newGeneration;
 		
         //print out our findings
         // System.out.println("\n******************* Elitist Ant Algorithm Results *******************");
