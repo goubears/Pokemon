@@ -1,6 +1,6 @@
 import java.io.*;
 import java.util.*;
-import java.util.Collections;
+import java.util.Vector;
 
 
 
@@ -11,8 +11,12 @@ public class Coevolution{
 
 
 	public Coevolution(Vector<Pokemon> eev1, Vector<Pokemon> eev2){
-		Collections.copy(eevee1, eev1);
-		Collections.copy(eevee2, eev2);
+		eevee1 = (Vector<Pokemon>)eev1.clone();
+		eevee2 = (Vector<Pokemon>)eev2.clone();
+
+		// if((eevee1.equals(eev1)) && (eevee2.equals(eev2))){
+		// 	System.out.println("true");
+		// }
 	}
 
 	public Vector<Pokemon> getEevee1(){

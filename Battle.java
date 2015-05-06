@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class Battle {
 
-	Vector<Pokemon> battleCrew = new Vector<Pokemon>(5);
+	Vector<Pokemon> battleCrew = new Vector<Pokemon>();
 	Random rand = new Random();
 	final private int NUMBEROFBATTLECREW = 5;
 	
@@ -19,6 +19,8 @@ public class Battle {
 	 	boolean[] battleWon = new boolean[NUMBEROFBATTLECREW];
 	 	double[] battleResults = new double[NUMBEROFBATTLECREW];
 
+	 	initBattleCrew();
+
 	 	//initialize battleResults to 0
 	 	for(int i=0; i<NUMBEROFBATTLECREW; i++){
 	 		battleResults[i] = 0;
@@ -28,21 +30,27 @@ public class Battle {
 		 for(int i=0; i<eevees.size(); i++){
 		 	eevees.get(i).powerUp();
 		 }
+		 System.out.println(eevees.get(1).getHealth());
 		 for(int i=0; i<battleCrew.size(); i++){
 		 	battleCrew.get(i).powerUp();
 		 }
 
-
+		 System.out.println("meep");
 		for(int i=0; i<eevees.size(); i++){	
+			System.out.println(eevees.size());
+			System.out.println(battleCrew.size());
 			for(int j=0; j<battleCrew.size(); j++){ 
+				System.out.println("meep");
 				while((eevees.get(i).getHealth()>0) && (battleCrew.get(j).getHealth()>0)){
 		 			if((alternate%2)==0){
 		 				newHP = damageFunction(eevees.get(i), battleCrew.get(j));
 		 				battleCrew.get(j).setHealth(newHP);
+		 				System.out.println(battleCrew.get(1).getHealth());
 		 			}
 		 			if((alternate%2)==1){
 		 				newHP = damageFunction(battleCrew.get(j), eevees.get(i));
 		 				eevees.get(i).setHealth(newHP);
+		 				System.out.println(eevees.get(1).getHealth());
 		 			}
 		 			alternate++;
 		 		}	
@@ -130,10 +138,10 @@ public class Battle {
 				while((eevees1.get(i).getHealth()>0) && (eevees2.get(j).getHealth()>0)){
 		 			if((alternate%2)==0){
 		 				newHP = damageFunction(eevees1.get(i), eevees2.get(j));
-		 				eevees2.get(i).setHealth(newHP);
+		 				eevees2.get(j).setHealth(newHP);
 		 			}
 		 			if((alternate%2)==1){
-		 				newHP = damageFunction(eevees2.get(i), eevees1.get(j));
+		 				newHP = damageFunction(eevees2.get(j), eevees1.get(i));
 		 				eevees1.get(i).setHealth(newHP);
 		 			}
 		 			alternate++;
@@ -230,13 +238,17 @@ public class Battle {
 	 	double damage = Double.MAX_VALUE;
 	 	int temp;
 	 	temp = rand.nextInt(3);
+	 	//System.out.println(temp);
 	 	switch(temp){
 	 		case 0:
 	 			damage = ((2*attacker.getLevel()+10)/(250))*(attacker.getAttack()/opponent.getDefense())*attacker.getMoveOne().getAttack()+2;
+	 			break;
 	 		case 1:	
 	 			damage = ((2*attacker.getLevel()+10)/(250))*(attacker.getAttack()/opponent.getDefense())*attacker.getMoveTwo().getAttack()+2;
+	 			break;
 	 		case 2:
 	 			damage = ((2*attacker.getLevel()+10)/(250))*(attacker.getAttack()/opponent.getDefense())*attacker.getMoveThree().getAttack()+2;
+	 			break;
 	 		default: //error
 	 			System.out.println("Error in assigning a random move for a pokemon.");
  				System.exit(0);

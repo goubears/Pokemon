@@ -50,7 +50,7 @@ public class EvolutionPSO {
 
     //named constants assigned upon receiving parameters
     private static int NUM_ITERATIONS = 50;
-    private static int POPULATION_SIZE = 100;
+    private static int POPULATION_SIZE = 5;           //ADELA CHANGED FROM 100 TO 5.
     private static int ALGORITHM = 5;
     private static int totalIterations;
     private static long duration;
@@ -290,8 +290,13 @@ public class EvolutionPSO {
     //method to fill temp cities vector. DON'T GET RID OF ME! I AM A TIMELSS RELIC OF THE PAST
     public static void generatePokemon()
     {
+        
         int NAME = 1;
-        Move myMove = new Move("Eevee");
+        int ident = Integer.MIN_VALUE;
+
+        //ADELA EDITED:
+        ident = rand.nextInt(3);
+        Move myMove = new Move("Eevee", ident);
         Move[] testMoves = myMove.getPossibleMoves(NAME);
 
 
@@ -304,6 +309,10 @@ public class EvolutionPSO {
             //testPokemon.print();
         }
  
+    }
+
+    public static Vector<Pokemon> getPokemon(){
+        return pokemon;
     }
 
 }

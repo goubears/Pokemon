@@ -1,9 +1,54 @@
+import java.io.*;
+import java.util.*;
+
 
 public class Main {
+
+	private static EvolutionPSO pso = new EvolutionPSO();
+	private static Battle battle = new Battle();
+	private static Neighborhood neighbor = new Neighborhood();
+	private static Coevolution coevol;
+
 
 	//main method
 	public static void main(String[] args) 
 	{
+
+		Vector<Integer> temp = new Vector<Integer>();
+		Vector<Pokemon> tempP = new Vector<Pokemon>();
+		
+		//Adela's testing:	
+		pso.generatePokemon();
+		//System.out.println(pso.getPokemon().get(1).getName());
+		neighbor.initNeighborhood();
+		//System.out.println("s" + neighbor.neighborhood.size() +  "h" + neighbor.neighborhood.get(1).size() + "m" +  neighbor.neighborhood.get(1).get(1).getMove1());
+		neighbor.assignNeighborhood(pso.getPokemon());
+		//temp = neighbor.getNeighborhood(1);
+		//for(int i=0; i<temp.size(); i++){
+		//	System.out.println(temp.get(i));
+		//}
+
+		//System.out.println(neighbor.pokemonNeighborhoods.size());
+		/*for(int i = 0; i<neighbor.pokemonNeighborhoods.size(); i++){
+			for(int j=0; j<neighbor.pokemonNeighborhoods.get(i).size(); j++){
+				System.out.println(neighbor.pokemonNeighborhoods.size());
+				System.out.println(neighbor.pokemonNeighborhoods.get(i).size());
+				System.out.println(neighbor.pokemonNeighborhoods.get(i).get(j));
+			}
+		}
+		*/
+
+		//System.out.println("hey");
+		tempP = battle.hybridBattle(pso.getPokemon());
+		//System.out.println("hey");
+		coevol = battle.coevolutionBattle(pso.getPokemon(), pso.getPokemon());
+		//System.out.println("hey");
+
+
+
+
+
+		/*
 		int NAME = 5;
 		Move myMove = new Move("Eevee");
 		Move[] testMoves = myMove.getPossibleMoves(NAME);
@@ -16,6 +61,7 @@ public class Main {
 			System.out.println("Accuracy: " + m.getAccuracy());
 			System.out.println();
 		}
+		*/
 
 		//test Pokemon creation
 		// Pokemon testPokemon = new Pokemon(1, 5, testMoves);
@@ -29,6 +75,7 @@ public class Main {
 		// System.out.println("Defense probability: " + testPokemon.getDefenseProbability());
 		// System.out.println("Fitness: " + testPokemon.getFitness());
 
+		/*
 		//test Pokemon creation
 		Pokemon testPokemon = new Pokemon(NAME, 5, 7, 5, 0.33, 0.33, 0.34, testMoves[0], testMoves[1], testMoves[2]);
 		System.out.println("Pokemon name: " + testPokemon.getName());
@@ -40,7 +87,7 @@ public class Main {
 		System.out.println("Attack probability: " + testPokemon.getAttackProbability());
 		System.out.println("Defense probability: " + testPokemon.getDefenseProbability());
 		System.out.println("Fitness: " + testPokemon.getFitness());
-
+		*/
 
 
 		// public Pokemon(int typeOfPokemon, int parent1Level, int parent2Level, int algorithm, 

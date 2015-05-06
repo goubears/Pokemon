@@ -59,7 +59,7 @@ import java.util.*;
 		public Move(String name)
 		{
 			allMoves(name);
-			identifier = random.nextInt(3);
+			identifier = random.nextInt(3);  //added one becuase of neighborhood
 			attack = attackPower[identifier];
 			accuracy = attackHitChance[identifier];
 			moveName = possibleMoves[identifier];		        

@@ -1,10 +1,12 @@
 import java.io.*;
 import java.util.*;
+import java.util.Arrays;
 
 
 public class Neighborhood {
 	Vector<Vector<comboMoves>> neighborhood = new Vector<Vector<comboMoves>>(); //initialized neighborhood combos
-	Vector<Vector<Integer>> pokemonNeighborhoods = new Vector<Vector<Integer>>(20); //vector of indexes of pokemon in specified neighborhoods
+	//Vector<Vector<Integer>> pokemonNeighborhoods = new Vector<Vector<Integer>>(20); //vector of indexes of pokemon in specified neighborhoods
+	Vector<Vector<Integer>> pokemonNeighborhoods = new Vector<Vector<Integer>>();
 
 	//returns the vector of the neighborhood
 	public Vector<Integer> getNeighborhood(int pokeIndex){
@@ -22,16 +24,32 @@ public class Neighborhood {
 
 	//assigns all pokemon to a neighborhood
 	public void assignNeighborhood(Vector<Pokemon> vPokemon){
+		int counter = 0;
+		//System.out.println(vPokemon.size());
+		//System.out.println(pokemonNeighborhoods.size());
+
+		for(int i=0; i<20; i++){
+			Vector<Integer> a = new Vector<Integer>();
+			pokemonNeighborhoods.add(a);
+		}
+
 
 		for(int i=0; i<vPokemon.size(); i++){ //all elements of vector
 			for(int j=0; j<20; j++){ //neighborhoods
 				for(int k=0; k<6; k++){ //elements of neighborhoods
+					/*System.out.println(" a " + neighborhood.get(j).get(k).getMove1() + " b " + neighborhood.get(j).get(k).getMove2() + " c " 
+						+ neighborhood.get(j).get(k).getMove3() + " d " + vPokemon.get(i).getMoveOne().getIdentifier() + " e " +
+						 vPokemon.get(i).getMoveTwo().getIdentifier() + " f " +
+						 vPokemon.get(i).getMoveThree().getIdentifier());
+						*/
 					if(	(neighborhood.get(j).get(k).getMove1() == vPokemon.get(i).getMoveOne().getIdentifier()) &&
 						(neighborhood.get(j).get(k).getMove2() == vPokemon.get(i).getMoveTwo().getIdentifier()) && 
 						(neighborhood.get(j).get(k).getMove3() == vPokemon.get(i).getMoveThree().getIdentifier())
 						){
 						 
 						pokemonNeighborhoods.get(j).add(i);
+						counter++;
+						//System.out.println(j);
 					}
 					
 				}
@@ -95,17 +113,17 @@ public class Neighborhood {
 
 		//#3
 		temp = new Vector<comboMoves>();
-		comboMoves d1 = new comboMoves(1,2,6);
+		comboMoves d1 = new comboMoves(1,2,0);
 		temp.add(d1);
-		comboMoves d2 = new comboMoves(1,6,2);
+		comboMoves d2 = new comboMoves(1,0,2);
 		temp.add(d2);
-		comboMoves d3 = new comboMoves(2,1,6);
+		comboMoves d3 = new comboMoves(2,1,0);
 		temp.add(d3);
-		comboMoves d4 = new comboMoves(2,6,1);
+		comboMoves d4 = new comboMoves(2,0,1);
 		temp.add(d4);
-		comboMoves d5 = new comboMoves(6,1,2);
+		comboMoves d5 = new comboMoves(0,1,2);
 		temp.add(d5);
-		comboMoves d6 = new comboMoves(6,2,1);
+		comboMoves d6 = new comboMoves(0,2,1);
 		temp.add(d6);
 		neighborhood.add(temp);
 
@@ -143,17 +161,17 @@ public class Neighborhood {
 
 		//#6
 		temp = new Vector<comboMoves>();
-		comboMoves g1 = new comboMoves(1,6,3);
+		comboMoves g1 = new comboMoves(1,0,3);
 		temp.add(g1);
-		comboMoves g2 = new comboMoves(1,3,6);
+		comboMoves g2 = new comboMoves(1,3,0);
 		temp.add(g2);
-		comboMoves g3 = new comboMoves(6,1,3);
+		comboMoves g3 = new comboMoves(0,1,3);
 		temp.add(g3);
-		comboMoves g4 = new comboMoves(6,3,1);
+		comboMoves g4 = new comboMoves(0,3,1);
 		temp.add(g4);
-		comboMoves g5 = new comboMoves(3,1,6);
+		comboMoves g5 = new comboMoves(3,1,0);
 		temp.add(g5);
-		comboMoves g6 = new comboMoves(3,6,1);
+		comboMoves g6 = new comboMoves(3,0,1);
 		temp.add(g6);
 		neighborhood.add(temp);
 
@@ -191,17 +209,17 @@ public class Neighborhood {
 
 		//#9
 		temp = new Vector<comboMoves>();
-		comboMoves j1 = new comboMoves(6,2,3);
+		comboMoves j1 = new comboMoves(0,2,3);
 		temp.add(j1);
-		comboMoves j2 = new comboMoves(6,3,2);
+		comboMoves j2 = new comboMoves(0,3,2);
 		temp.add(j2);
-		comboMoves j3 = new comboMoves(2,6,3);
+		comboMoves j3 = new comboMoves(2,0,3);
 		temp.add(j3);
-		comboMoves j4 = new comboMoves(2,3,6);
+		comboMoves j4 = new comboMoves(2,3,0);
 		temp.add(j4);
-		comboMoves j5 = new comboMoves(3,6,2);
+		comboMoves j5 = new comboMoves(3,0,2);
 		temp.add(j5);
-		comboMoves j6 = new comboMoves(3,2,6);
+		comboMoves j6 = new comboMoves(3,2,0);
 		temp.add(j6);
 		neighborhood.add(temp);
 
@@ -224,34 +242,34 @@ public class Neighborhood {
 
 		//#11
 		temp = new Vector<comboMoves>();
-		comboMoves l1 = new comboMoves(1,4,6); 
+		comboMoves l1 = new comboMoves(1,4,0); 
 		temp.add(l1);
-		comboMoves l2 = new comboMoves(1,6,4);
+		comboMoves l2 = new comboMoves(1,0,4);
 		temp.add(l2);
-		comboMoves l3 = new comboMoves(4,1,6);
+		comboMoves l3 = new comboMoves(4,1,0);
 		temp.add(l3);
-		comboMoves l4 = new comboMoves(4,6,1);
+		comboMoves l4 = new comboMoves(4,0,1);
 		temp.add(l4);
-		comboMoves l5 = new comboMoves(6,1,4);
+		comboMoves l5 = new comboMoves(0,1,4);
 		temp.add(l5);
-		comboMoves l6 = new comboMoves(6,4,1);
+		comboMoves l6 = new comboMoves(0,4,1);
 		temp.add(l6);
 		neighborhood.add(temp);
 
 
 		//#12
 		temp = new Vector<comboMoves>();
-		comboMoves m1 = new comboMoves(1,5,6);
+		comboMoves m1 = new comboMoves(1,5,0);
 		temp.add(m1);
-		comboMoves m2 = new comboMoves(1,6,5);
+		comboMoves m2 = new comboMoves(1,0,5);
 		temp.add(m2);
-		comboMoves m3 = new comboMoves(5,1,6);
+		comboMoves m3 = new comboMoves(5,1,0);
 		temp.add(m3);
-		comboMoves m4 = new comboMoves(5,6,1);
+		comboMoves m4 = new comboMoves(5,0,1);
 		temp.add(m4);
-		comboMoves m5 = new comboMoves(6,1,5);
+		comboMoves m5 = new comboMoves(0,1,5);
 		temp.add(m5);
-		comboMoves m6 = new comboMoves(6,5,1);
+		comboMoves m6 = new comboMoves(0,5,1);
 		temp.add(m6);
 		neighborhood.add(temp);
 
@@ -273,33 +291,33 @@ public class Neighborhood {
 
 		//#14
 		temp = new Vector<comboMoves>();
-		comboMoves o1 = new comboMoves(4,2,6);
+		comboMoves o1 = new comboMoves(4,2,0);
 		temp.add(o1);
-		comboMoves o2 = new comboMoves(4,6,2);
+		comboMoves o2 = new comboMoves(4,0,2);
 		temp.add(o2);
-		comboMoves o3 = new comboMoves(2,4,6);
+		comboMoves o3 = new comboMoves(2,4,0);
 		temp.add(o3);
-		comboMoves o4 = new comboMoves(2,6,4);
+		comboMoves o4 = new comboMoves(2,0,4);
 		temp.add(o4);
-		comboMoves o5 = new comboMoves(6,4,2);
+		comboMoves o5 = new comboMoves(0,4,2);
 		temp.add(o5);
-		comboMoves o6 = new comboMoves(6,2,4);
+		comboMoves o6 = new comboMoves(0,2,4);
 		temp.add(o6);
 		neighborhood.add(temp);
 		
 		//#15
 		temp = new Vector<comboMoves>();
-		comboMoves p1 = new comboMoves(5,2,6);
+		comboMoves p1 = new comboMoves(5,2,0);
 		temp.add(p1);
-		comboMoves p2 = new comboMoves(5,6,2);
+		comboMoves p2 = new comboMoves(5,0,2);
 		temp.add(p2);
-		comboMoves p3 = new comboMoves(2,5,6);
+		comboMoves p3 = new comboMoves(2,5,0);
 		temp.add(p3);
-		comboMoves p4 = new comboMoves(2,6,5);
+		comboMoves p4 = new comboMoves(2,0,5);
 		temp.add(p4);
-		comboMoves p5 = new comboMoves(6,5,2);
+		comboMoves p5 = new comboMoves(0,5,2);
 		temp.add(p5);
-		comboMoves p6 = new comboMoves(6,2,5);
+		comboMoves p6 = new comboMoves(0,2,5);
 		temp.add(p6);
 		neighborhood.add(temp);
 		
@@ -322,51 +340,51 @@ public class Neighborhood {
 
 		//#17
 		temp = new Vector<comboMoves>();
-		comboMoves r1 = new comboMoves(4,6,3);
+		comboMoves r1 = new comboMoves(4,0,3);
 		temp.add(r1);
-		comboMoves r2 = new comboMoves(4,3,6);
+		comboMoves r2 = new comboMoves(4,3,0);
 		temp.add(r2);
-		comboMoves r3 = new comboMoves(6,4,3);
+		comboMoves r3 = new comboMoves(0,4,3);
 		temp.add(r3);
-		comboMoves r4 = new comboMoves(6,3,4);
+		comboMoves r4 = new comboMoves(0,3,4);
 		temp.add(r4);
-		comboMoves r5 = new comboMoves(3,4,6);
+		comboMoves r5 = new comboMoves(3,4,0);
 		temp.add(r5);
-		comboMoves r6 = new comboMoves(3,6,4);
+		comboMoves r6 = new comboMoves(3,0,4);
 		temp.add(r6);
 		neighborhood.add(temp);
 		
 
 		//#18
 		temp = new Vector<comboMoves>();
-		comboMoves s1 = new comboMoves(5,6,3);
+		comboMoves s1 = new comboMoves(5,0,3);
 		temp.add(s1);
-		comboMoves s2 = new comboMoves(5,3,6);
+		comboMoves s2 = new comboMoves(5,3,0);
 		temp.add(s2);
-		comboMoves s3 = new comboMoves(6,5,3);
+		comboMoves s3 = new comboMoves(0,5,3);
 		temp.add(s3);
-		comboMoves s4 = new comboMoves(6,3,5);
+		comboMoves s4 = new comboMoves(0,3,5);
 		temp.add(s4);
-		comboMoves s5 = new comboMoves(3,5,6);
+		comboMoves s5 = new comboMoves(3,5,0);
 		temp.add(s5);
-		comboMoves s6 = new comboMoves(3,6,5);
+		comboMoves s6 = new comboMoves(3,0,5);
 		temp.add(s6);
 		neighborhood.add(temp);
 		
 
 		//#19
 		temp = new Vector<comboMoves>();
-		comboMoves t1 = new comboMoves(4,5,6);
+		comboMoves t1 = new comboMoves(4,5,0);
 		temp.add(t1);
-		comboMoves t2 = new comboMoves(4,6,5);
+		comboMoves t2 = new comboMoves(4,0,5);
 		temp.add(t2);
-		comboMoves t3 = new comboMoves(5,4,6);
+		comboMoves t3 = new comboMoves(5,4,0);
 		temp.add(t3);
-		comboMoves t4 = new comboMoves(5,6,4);
+		comboMoves t4 = new comboMoves(5,0,4);
 		temp.add(t4);
-		comboMoves t5 = new comboMoves(6,4,5);
+		comboMoves t5 = new comboMoves(0,4,5);
 		temp.add(t5);
-		comboMoves t6 = new comboMoves(6,5,4);
+		comboMoves t6 = new comboMoves(0,5,4);
 		temp.add(t6);
 		neighborhood.add(temp);
 
