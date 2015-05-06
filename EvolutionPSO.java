@@ -55,6 +55,9 @@ public class EvolutionPSO {
     private static int totalIterations;
     private static long duration;
 
+    //instance of Neighborhood to call appropriate methods
+    private static Neighborhood neighborhood = new Neighborhood();
+
     // public static void evolutionPSO(Vector<Pokemon> breedingPopulation, int algo)
     // {
     //     //set up variables
@@ -76,6 +79,7 @@ public class EvolutionPSO {
         generatePokemon();
 
         //PSO HERE, NEED NEIGHBORHOODS TO BE FINISHED
+        neighborhood.assignNeighborhood(pokemon);
         //update each Pokemon's stats according to its personal and global bests
         // for (int i = 0; i < pokemon.size(); i++){
         // 	pokemon.get(i).moveProbabilities();
