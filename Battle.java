@@ -6,18 +6,23 @@ public class Battle {
 
 	Vector<Pokemon> battleCrew = new Vector<Pokemon>(5);
 	Random rand = new Random();
-	final private int NUMEROFBATTLECREW = 5;
+	final private int NUMBEROFBATTLECREW = 5;
 	
-	 public Vector hybridBattle(Vector<Pokemon> eevees)
+	 public Vector<Pokemon> hybridBattle(Vector<Pokemon> eevees)
 	 {
 
 	 	int alternate = 0;
 	 	double newHP = Double.MAX_VALUE;
-	 	double[] battleHealth = new double[NUMEROFBATTLECREW]; 
-	 	double[] battleAttack = new double[NUMEROFBATTLECREW]; 
-	 	double[] battleDefense = new double[NUMEROFBATTLECREW]; 
-	 	boolean[] battleWon = new boolean[NUMEROFBATTLECREW];
-	 	double[] battleResults = new double[NUMEROFBATTLECREW];
+	 	double[] battleHealth = new double[NUMBEROFBATTLECREW]; 
+	 	double[] battleAttack = new double[NUMBEROFBATTLECREW]; 
+	 	double[] battleDefense = new double[NUMBEROFBATTLECREW]; 
+	 	boolean[] battleWon = new boolean[NUMBEROFBATTLECREW];
+	 	double[] battleResults = new double[NUMBEROFBATTLECREW];
+
+	 	//initialize battleResults to 0
+	 	for(int i=0; i<NUMBEROFBATTLECREW; i++){
+	 		battleResults[i] = 0;
+	 	}
 
 	 	//powers ups for eevees and battle crew
 		 for(int i=0; i<eevees.size(); i++){
@@ -33,32 +38,55 @@ public class Battle {
 				while((eevees.get(i).getHealth()>0) && (battleCrew.get(j).getHealth()>0)){
 		 			if((alternate%2)==0){
 		 				newHP = damageFunction(eevees.get(i), battleCrew.get(j));
-		 				eevees.get(i).setHealth(newHP);
+		 				battleCrew.get(j).setHealth(newHP);
 		 			}
 		 			if((alternate%2)==1){
-		 				newHP = damageFunction(eevees.get(i), battleCrew.get(j));
+		 				newHP = damageFunction(battleCrew.get(j), eevees.get(i));
 		 				eevees.get(i).setHealth(newHP);
 		 			}
 		 			alternate++;
 		 		}	
 		 		
-		 		battleHealth[j] = eevees.get(i).getHealth();
-		 		battleAttack[j] = eevees.get(i).getAttack();
-		 		battleDefense[j] = eevees.get(i).getDefense();
-		 		if(eevees.get(i).getHealth()>0)
+		 		if(eevees.get(i).getHealth()<0){
+		 			battleHealth[j] = 0;
+		 		}
+		 		else{
+		 			battleHealth[j] = eevees.get(i).getHealth();
+		 		}
+		 		if(eevees.get(i).getAttack()<0){
+		 			battleAttack[j] = 0;
+		 		}
+		 		else{
+		 			battleAttack[j] = eevees.get(i).getAttack();
+		 		}
+		 		if(eevees.get(i).getDefense()<0){
+		 			battleDefense[j] = 0;
+		 		}
+		 		else{
+		 			battleDefense[j] = eevees.get(i).getDefense();
+		 		}
+		 		if(eevees.get(i).getHealth()>0){
 		 			battleWon[j] = true;
+		 			battleResults[j] += 1.0;
+		 		}
 		 		else{
 		 			battleWon[j] = false;
 		 		}
-		 		//battleResults?
+
 
 		 		battleCrew.get(j).powerUp();
 		 		alternate = 0;
-		 		//reset health of eevee?
-		 		eevees.get(i).calculateFitness(battleHealth, battleAttack, battleDefense, battleWon, battleResults);
-		 		eevees.get(i).levelUp(battleWon);
-
 			}
+
+			eevees.get(i).setBattleHP(battleHealth);
+			eevees.get(i).setBattleAtt(battleAttack);
+			eevees.get(i).setBattleDef(battleDefense);
+			eevees.get(i).setBattleWinB(battleWon);
+		}
+
+		for(int i=0; i<eevees.size(); i++){	
+			eevees.get(i).calculateFitness(eevees.get(i).getBattleHP(), eevees.get(i).getBattleAtt(), eevees.get(i).getBattleDef(), eevees.get(i).getBattleWinB(), battleResults);
+		 	eevees.get(i).levelUp(eevees.get(i).getBattleWinB());
 		}
 
 		return eevees;
@@ -67,56 +95,134 @@ public class Battle {
 
 
 	 //eevee1 gets updated while fighting eevee2
-	 public Vector coevolutionBattle(Vector<Pokemon> eevees1, Vector<Pokemon> eevees2){
+	 public Coevolution coevolutionBattle(Vector<Pokemon> eevees1, Vector<Pokemon> eevees2){
 	 	int alternate = 0;
 	 	double newHP = Double.MAX_VALUE;
 	 	int popSize = eevees1.size();
-	 	double[] battleHealth = new double[popSize]; 
-	 	double[] battleAttack = new double[popSize]; 
-	 	double[] battleDefense = new double[popSize];
-	 	boolean[] battleWon = new boolean[popSize];
-	 	double[] battleResults = new double[popSize];
+	 	//eevee1 stats
+	 	double[] battleHealth1 = new double[popSize]; 
+	 	double[] battleAttack1 = new double[popSize]; 
+	 	double[] battleDefense1 = new double[popSize];
+	 	boolean[] battleWon1 = new boolean[popSize];
+		double[] battleResults1 = new double[popSize];
+	 	//eevee2 stats
+	 	double[][] battleHealth2 = new double[popSize][popSize]; 
+	 	double[][] battleAttack2 = new double[popSize][popSize]; 
+	 	double[][] battleDefense2 = new double[popSize][popSize];
+	 	boolean[][] battleWon2 = new boolean[popSize][popSize];
+	 	double[] battleResults2 = new double[popSize];
+
+
+	 	//initialize battleResults to 0
+	 	for(int i=0; i<popSize; i++){
+	 		battleResults1[i] = 0;
+	 		battleResults2[i] = 0;
+	 	}
 
 	 	//powers ups for eevees and eevee battle crew
-		 for(int i=0; i<eevees1.size(); i++){
+		for(int i=0; i<eevees1.size(); i++){
 		 	eevees1.get(i).powerUp();
 		 	eevees2.get(i).powerUp();
-		 }
+		}
 
 		for(int i=0; i<eevees1.size(); i++){	
 			for(int j=0; j<eevees2.size(); j++){ 
 				while((eevees1.get(i).getHealth()>0) && (eevees2.get(j).getHealth()>0)){
 		 			if((alternate%2)==0){
 		 				newHP = damageFunction(eevees1.get(i), eevees2.get(j));
-		 				eevees1.get(i).setHealth(newHP);
+		 				eevees2.get(i).setHealth(newHP);
 		 			}
 		 			if((alternate%2)==1){
-		 				newHP = damageFunction(eevees1.get(i), eevees2.get(j));
+		 				newHP = damageFunction(eevees2.get(i), eevees1.get(j));
 		 				eevees1.get(i).setHealth(newHP);
 		 			}
 		 			alternate++;
 		 		}	
 		 		
-		 		battleHealth[j] = eevees1.get(i).getHealth();
-		 		battleAttack[j] = eevees1.get(i).getAttack();
-		 		battleDefense[j] = eevees1.get(i).getDefense();
-		 		if(eevees1.get(i).getHealth()>0)
-		 			battleWon[j] = true;
-		 		else{
-		 			battleWon[j] = false;
+		 		//eevee1 updates
+		 		if(eevees1.get(i).getHealth()<0){
+		 			battleHealth1[j] = 0;
 		 		}
-		 		//battleResults?
+		 		else{
+		 			battleHealth1[j] = eevees1.get(i).getHealth();
+		 		}
+		 		if(eevees1.get(i).getAttack()<0){
+		 			battleAttack1[j] = 0;
+		 		}
+		 		else{
+		 			battleAttack1[j] = eevees1.get(i).getAttack();
+		 		}
+		 		if(eevees1.get(i).getDefense()<0){
+		 			battleDefense1[j] = 0;
+		 		}
+		 		else{
+		 			battleDefense1[j] = eevees1.get(i).getDefense();
+		 		}
+		 		if(eevees1.get(i).getHealth()>0){
+		 			battleWon1[j] = true;
+		 			battleResults1[j] += 1.0;
+		 		}
+		 		else{
+		 			battleWon1[j] = false;
+		 		}
+
+		 		//eevee2 updates
+		 		if(eevees2.get(j).getHealth()<0){
+		 			battleHealth2[j][i] = 0;
+		 		}
+		 		else{
+		 			battleHealth2[j][i] = eevees2.get(j).getHealth();
+		 		}
+		 		if(eevees2.get(j).getAttack()<0){
+		 			battleAttack2[j][i] = 0;
+		 		}
+		 		else{
+		 			battleAttack2[j][i] = eevees2.get(j).getAttack();
+		 		}
+		 		if(eevees2.get(j).getDefense()<0){
+		 			battleDefense2[j][i] = 0;
+		 		}
+		 		else{
+		 			battleDefense2[j][i] = eevees2.get(j).getDefense();
+		 		}
+		 		if(eevees2.get(j).getHealth()>0){
+		 			battleWon2[j][i] = true;
+		 			battleResults2[i] += 1.0;
+		 		}
+		 		else{
+		 			battleWon2[j][i] = false;
+		 		}
 
 		 		eevees2.get(j).powerUp();
 		 		alternate = 0;
-		 		//reset health of eevee1?
-		 		eevees1.get(i).calculateFitness(battleHealth, battleAttack, battleDefense, battleWon, battleResults);
-		 		eevees1.get(i).levelUp(battleWon);
 
-			}
+			} //j
+
+			eevees1.get(i).setBattleHP(battleHealth1);
+			eevees1.get(i).setBattleAtt(battleAttack1);
+			eevees1.get(i).setBattleDef(battleDefense1);
+			eevees1.get(i).setBattleWinB(battleWon1);
+
+		} //i
+
+		for(int i=0; i<popSize; i++){
+			eevees2.get(i).setBattleHP(battleHealth2[i]);
+			eevees2.get(i).setBattleAtt(battleAttack2[i]);
+			eevees2.get(i).setBattleDef(battleDefense2[i]);
+			eevees2.get(i).setBattleWinB(battleWon2[i]);
 		}
 
-		return eevees1;
+
+		for(int i=0; i<popSize; i++){		
+		 	eevees1.get(i).calculateFitness(eevees1.get(i).getBattleHP(), eevees1.get(i).getBattleAtt(), eevees1.get(i).getBattleDef(), eevees1.get(i).getBattleWinB(), battleResults1);
+		 	eevees1.get(i).levelUp(eevees1.get(i).getBattleWinB());
+
+		 	eevees2.get(i).calculateFitness(eevees2.get(i).getBattleHP(), eevees2.get(i).getBattleAtt(), eevees2.get(i).getBattleDef(), eevees2.get(i).getBattleWinB(), battleResults2);
+		 	eevees2.get(i).levelUp(eevees2.get(i).getBattleWinB());
+		}
+
+		Coevolution coevolution = new Coevolution(eevees1, eevees2);
+		return coevolution;
 	 }
 
 

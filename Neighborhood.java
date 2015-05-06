@@ -7,7 +7,7 @@ public class Neighborhood {
 	Vector<Vector<Integer>> pokemonNeighborhoods = new Vector<Vector<Integer>>(20); //vector of indexes of pokemon in specified neighborhoods
 
 	//returns the vector of the neighborhood
-	public Vector getNeighborhood(int pokeIndex){
+	public Vector<Integer> getNeighborhood(int pokeIndex){
 		for(int i=0; i<20; i++){
 			for(int j=0; j<pokemonNeighborhoods.get(i).size(); j++){
 				if(pokemonNeighborhoods.get(i).get(j) == pokeIndex){

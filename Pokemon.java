@@ -85,6 +85,11 @@ public class Pokemon {
 	private double attack;
 	private double defense;
 
+	private boolean[] battleWinB = new boolean[5];
+	private double[] battleHP = new double[5]; 
+	private double[] battleAtt = new double[5]; 
+	private double[] battleDef = new double[5];
+
 	private double maxHealth;
 	private double maxAttack;
 	private double maxDefense;
@@ -485,8 +490,14 @@ public class Pokemon {
 	public double getAttack(){
 		return attack;
 	}
+	public void setAttack(double att){
+		attack = att;
+	}
 	public double getDefense(){
 		return defense;
+	}
+	public void setDefense(double def){
+		defense = def;
 	}
 	public double getHealthProbability(){
 		return healthProbability;
@@ -524,7 +535,30 @@ public class Pokemon {
 	public double[] getProbabilitiesArray(){
 		return probabilitiesArray;
 	}
-
+	public boolean[] getBattleWinB(){
+		return battleWinB;
+	}
+	public void setBattleWinB(boolean[] battWin){
+		battleWinB = battWin.clone();
+	}
+	public double[] getBattleHP(){
+		return battleHP;
+	} 
+	public void setBattleHP(double []temp){
+		battleHP = temp.clone();
+	}
+	public double[] getBattleAtt(){
+		return battleAtt;
+	}
+	public void setBattleAtt(double []temp){
+		battleAtt = temp.clone();
+	}
+	public double[] getBattleDef(){
+		return battleDef;
+	}
+	public void setBattleDef(double[] temp){
+		battleDef = temp.clone();
+	}
 /*
 private int level;
 	private int battlesWon;
