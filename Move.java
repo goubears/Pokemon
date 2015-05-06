@@ -25,6 +25,37 @@ import java.util.*;
 		private String[] moves = new String[3];
 		private Random random = new Random();
 
+
+        // //used in battle
+        // public void randomMove(int name)
+        // {
+        //     String pokeName;
+        //     switch(name){
+        //         case EEVEE:
+        //             pokeName = "Eevee";
+        //         case PIKACHU:
+        //             pokeName = "Pikachu";
+        //         case CHARMANDER:
+        //             pokeName = "Charmander";
+        //         case MEOWTH:
+        //             pokeName = "Meowth";
+        //         case HOUNDOUR:
+        //             pokeName = "Houndour";
+        //         case KOFFING:
+        //             pokeName = "Koffing";
+        //         default: //error
+        //             System.out.println("Error in assigning a random move for a pokemon.");
+        //             System.exit(0);
+        //     }
+
+
+        //     allMoves(pokeName);
+        //     identifier = random.nextInt(3);
+        //     attack = attackPower[identifier];
+        //     accuracy = attackHitChance[identifier];
+        //     moveName = possibleMoves[identifier];               
+        // }
+
 		public Move(String name)
 		{
 			allMoves(name);

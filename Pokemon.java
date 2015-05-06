@@ -5,11 +5,12 @@ import java.util.*;
 
 public class Pokemon {
 
-	//private Neighborhood neighborhood;
+	private Neighborhood neighborhood = new Neighborhood();
+
 	private double MAX_LEVEL = 50;
 
 	private int pokemonName;
-	final private int EEVEE = 1;
+	final private int EEVEE = 1; //oddly enough was missing this
 	final private int PIKACHU = 2;
 	final private int CHARMANDER = 3;
 	final private int MEOWTH = 4;
@@ -97,8 +98,6 @@ public class Pokemon {
 	private Move move2;
 	private Move move3;
 	private Move[] movesArray = new Move[3];
-
-	//private Neighborhood neighborhood;
 
 	private double fitness;
 	private double personalBest;
@@ -332,11 +331,11 @@ public class Pokemon {
 			}
 		}
 
-		double avaerageHealth = (sumHealth/battleResults.length)/maxHealth;
-		double avaerageAttack = (sumAttack/battleResults.length)/maxAttack;
-		double avaerageDefense = (sumDefense/battleResults.length)/maxDefense;
+		double averageHealth = (sumHealth/battleResults.length)/maxHealth;
+		double averageAttack = (sumAttack/battleResults.length)/maxAttack;
+		double averageDefense = (sumDefense/battleResults.length)/maxDefense;
 
-		fitness = (avaerageHealth*avaerageAttack*avaerageDefense)+battleStrength;
+		fitness = (averageHealth*averageAttack*averageDefense)+battleStrength;
 
 		//update personal best if necessary 
 		if (fitness>personalBest)
@@ -474,8 +473,14 @@ public class Pokemon {
 	public int getBattlesWon(){
 		return battlesWon;
 	}
+	public void setBattlesWin(int battle){
+		battlesWon = battle;
+	}
 	public double getHealth(){
 		return health;
+	}
+	public void setHealth(double hp){
+		health = hp;
 	}
 	public double getAttack(){
 		return attack;
@@ -519,6 +524,7 @@ public class Pokemon {
 	public double[] getProbabilitiesArray(){
 		return probabilitiesArray;
 	}
+
 /*
 private int level;
 	private int battlesWon;
