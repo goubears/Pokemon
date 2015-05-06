@@ -1,11 +1,12 @@
 
 import java.util.*;
-	
+import java.lang.Math;
+	 
 //Make getters and setters
 
 public class Pokemon {
 
-	private Neighborhood neighborhood = new Neighborhood();
+	private Neighborhood myNeighborhood = new Neighborhood();
 
 	private double MAX_LEVEL = 50;
 
@@ -105,7 +106,13 @@ public class Pokemon {
 	private Move[] movesArray = new Move[3];
 
 	private double fitness;
-	private double personalBest;
+	private double personalBestFitness;
+	private double personalBestHealth;
+	private double personalBestAttack;
+	private double personalBestDefense;
+
+	private final double PSO_INCREMENT = 0.05;
+	private Neighborhood neighborhood = new Neighborhood();
 
 	//random number generator
 	Random random = new Random();
@@ -173,7 +180,7 @@ public class Pokemon {
 		//neighborhood = getNeighborhood(move1, move2, move3);
 
 		fitness = 0;
-		personalBest = 0;
+		personalBestFitness = 0;
 
 		movesArray[0] = move1;
 		movesArray[1] = move2;
@@ -223,7 +230,7 @@ public class Pokemon {
 		//neighborhood = getNeighborhood(move1, move2, move3);
 
 		fitness = 0;
-		personalBest = 0;
+		personalBestFitness = 0;
 
 
 		movesArray[0] = move1;
@@ -343,29 +350,43 @@ public class Pokemon {
 		fitness = (averageHealth*averageAttack*averageDefense)+battleStrength;
 
 		//update personal best if necessary 
-		if (fitness>personalBest)
+		if (fitness>personalBestFitness)
 		{
-			personalBest = fitness;
+			personalBestFitness = fitness;
+			personalBestHealth = healthProbability;
+			personalBestAttack = attackProbability;
+			personalBestDefense = defenseProbability;
 		}
 	}
 
-	/*
-	 * STILL NEED TO CODE
-	 */
-	public void moveProbabilities()
+	public void moveProbabilities(Pokemon neighborhoodBest)
 	{
-		//PSO stuff...
-		//use personal best
-		//use neighborhood best
-		//move toward optimal
+
 
 		double healthAdjustment = 0;
 		double attackAdjustment = 0;
 		double defenseAdjustment = 0;
 
+		//update toward personal best
+		healthAdjustment += personalBestHealth*PSO_INCREMENT*sign(healthProbability - personalBestHealth);
+		attackAdjustment += personalBestAttack*PSO_INCREMENT*sign(attackProbability - personalBestAttack);
+		defenseAdjustment += personalBestDefense*PSO_INCREMENT*sign(defenseProbability - personalBestDefense);
+
+		//update toward neighborhood best
+		healthAdjustment += neighborhoodBest.getHealthProbability()*PSO_INCREMENT*sign(healthProbability - neighborhoodBest.getHealthProbability());
+		attackAdjustment += neighborhoodBest.getAttackProbability()*PSO_INCREMENT*sign(attackProbability - neighborhoodBest.getAttackProbability());
+		defenseAdjustment += neighborhoodBest.getDefenseProbability()*PSO_INCREMENT*sign(defenseProbability - neighborhoodBest.getDefenseProbability());
+		
 		healthProbability = healthProbability+healthAdjustment;
 		attackProbability = attackProbability+attackAdjustment;
 		defenseProbability = defenseProbability+defenseAdjustment;
+
+		if (healthProbability < 0)
+			healthProbability = 0;
+		if (attackProbability < 0)
+			attackProbability = 0;
+		if (defenseProbability < 0)
+			defenseProbability = 0;
 
 		double normalize = healthProbability+attackProbability+defenseProbability;
 
@@ -463,6 +484,16 @@ public class Pokemon {
 		System.out.println();
 	}
 
+	public double sign(double a){
+
+		if (a == 0)
+			return 0.0;
+		else if (a > 0)
+			return 1.0;
+		else
+			return -1.0;
+	}
+
 	public Move getMoveOne(){
 		return move1;
 	}
@@ -512,7 +543,7 @@ public class Pokemon {
 		return fitness;
 	}
 	public double getPersonalBest(){
-		return personalBest;
+		return personalBestFitness;
 	}
 	public int getName(){
 		return pokemonName;
