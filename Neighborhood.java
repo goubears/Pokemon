@@ -23,6 +23,8 @@ public class Neighborhood {
 			}
 		}
 	}
+
+	
 	
 
 	public void initNeighborhood(int maxMoves){
