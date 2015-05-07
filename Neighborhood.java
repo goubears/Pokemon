@@ -55,12 +55,20 @@ public class Neighborhood {
 						 
 						pokemonNeighborhoods.get(j).add(i);
 						counter++;
-						//System.out.println(j);
+						System.out.println(j); //this prints out the neighborhood
 					}
 					
 				}
 			}
-		}	
+		}
+
+		// for(int i=0; i<20; i++){
+
+				
+		// 			pokemonNeighborhoods.get(i).removeElementAt(0);
+
+		// }
+
 	}
 
 	

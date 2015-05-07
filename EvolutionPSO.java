@@ -31,41 +31,41 @@ import java.util.Random;
 public class EvolutionPSO {
 	
     //Vectors and arrays for storing tours the ants make and paths between cities
-    private static Vector<Pokemon> pokemon = new Vector<Pokemon>();
-    private static Vector<Pokemon> newGeneration = new Vector<Pokemon>();
+    private Vector<Pokemon> pokemon;
+    private  Vector<Pokemon> newGeneration = new Vector<Pokemon>();
 
     //named constants for Pokemon and Move parameters
-    private static final int NUM_MOVES = 3;
-    private static final int NUM_PROBABILITIES = 3;
+    private final int NUM_MOVES = 3;
+    private final int NUM_PROBABILITIES = 3;
 
     
     //private static int NUM_ITERATIONS;
-    private static final double CROSSOVER_PROBABILITY = 0.7;
-    private static final double MUTATION_PROBABILITY = 0.01;
+    private  final double CROSSOVER_PROBABILITY = 0.7;
+    private final double MUTATION_PROBABILITY = 0.01;
 
     //time limit to stop algorithm. set at eight minutes (ms)
-    private static final long TIME_LIMIT = 480000;
+    private final long TIME_LIMIT = 480000;
 
     //random number generators
-    private static Random rand = new Random();
+    private  Random rand = new Random();
 
     //named constants assigned upon receiving parameters
-    private static int NUM_ITERATIONS = 50;
-    private static int POPULATION_SIZE = 5;           //ADELA CHANGED FROM 100 TO 5.
-    private static int ALGORITHM = 5;
-    private static int totalIterations;
-    private static long duration;
+    private int POPULATION_SIZE;         //ADELA CHANGED FROM 100 TO 5.
+    private  int ALGORITHM;
+    private  int totalIterations;
+    private  long duration;
 
     //instance of Neighborhood to call appropriate methods
-    private static Neighborhood neighborhood = new Neighborhood();
+    private Neighborhood neighborhood = new Neighborhood();
 
-    // public static Vector<Pokemon> evolutionPSO(Vector<Pokemon> breedingPopulation, int algo)
-    // {
-    //     //set up variables
-    //     pokemon = breedingPopulation;
-    //     ALGORITHM = algo;
+    public Vector<Pokemon> evolutionPSO(Vector<Pokemon> breedingPopulation, int algo)
+    {
+        //set up variables
+        pokemon = breedingPopulation;
+        ALGORITHM = algo;
+        POPULATION_SIZE = pokemon.size();
 
-    public static void main (String[] args){
+    //public static void main (String[] args){
         
         System.out.println("I AM A PROGRAM. HEAR ME ROAR!");
         //start timer
@@ -77,7 +77,7 @@ public class EvolutionPSO {
         endTime = System.currentTimeMillis();
         duration = (endTime - startTime)/1000;
 
-        generatePokemon();
+        //eneratePokemon();
 
         //initialize neighborhoods structures for Particle Swarm Optimization techniques
         neighborhood.assignNeighborhood(pokemon);
@@ -92,7 +92,11 @@ public class EvolutionPSO {
             //find neighborhood best
             double highestFitness = Double.NEGATIVE_INFINITY;
             int bestIndex = -1;
+
+           // System.out.println("Pokemon size: " + pokemon.size());
+            //System.out.println("Current neighborhood size: " + currNeighborhood.size());
             for (int j = 0; j < currNeighborhood.size(); j++){
+                //System.out.println("Current index: " + currNeighborhood.get(j));
                 double currFitness = pokemon.get(currNeighborhood.get(j)).getFitness();
                 if(currFitness > highestFitness){
                     highestFitness = currFitness;
@@ -187,7 +191,7 @@ public class EvolutionPSO {
             }
         }
 
-        //return newGeneration;
+        return newGeneration;
 		
         //print out our findings
         // System.out.println("\n******************* Elitist Ant Algorithm Results *******************");
@@ -218,7 +222,7 @@ public class EvolutionPSO {
 
     }
 
-    public static void makeBabies(Pokemon parentOne, Pokemon parentTwo){
+    public  void makeBabies(Pokemon parentOne, Pokemon parentTwo){
 
         //generate random double to see if they will mate
         double randomDouble = rand.nextDouble();
@@ -308,18 +312,19 @@ public class EvolutionPSO {
         newGeneration.add(secondBaby);
     }
 
-    public static int getTotalIterations(){
+    public int getTotalIterations(){
         return totalIterations;
     }
 
-    public static long getDuration(){
+    public  long getDuration(){
         return duration;
     }
 
     //method to fill temp cities vector. DON'T GET RID OF ME! I AM A TIMELSS RELIC OF THE PAST
-    public static void generatePokemon()
+    public  Vector<Pokemon> generatePokemon(int size)
     {
         
+        Vector<Pokemon> newPokemon = new Vector<Pokemon>();
         int NAME = 1;
         int ident = Integer.MIN_VALUE;
 
@@ -329,18 +334,21 @@ public class EvolutionPSO {
         Move[] testMoves = myMove.getPossibleMoves(NAME);
 
 
-        for (int i = 0; i < POPULATION_SIZE; i++){
+        for (int i = 0; i < size; i++){
             //generate Eevee, give it random fitness
             Pokemon testPokemon = new Pokemon(1, 5, testMoves);
             double randomFitness = rand.nextDouble()*100;
             testPokemon.setFitness(randomFitness);
-            pokemon.add(testPokemon);
+            newPokemon.add(testPokemon);
             //testPokemon.print();
         }
+        return newPokemon;
+
+
  
     }
 
-    public static Vector<Pokemon> getPokemon(){
+    public  Vector<Pokemon> getPokemon(){
         return pokemon;
     }
 
