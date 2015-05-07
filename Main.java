@@ -42,8 +42,9 @@ public class Main {
 		tempP = battle.hybridBattle(pso.getPokemon());
 		//System.out.println("hey");
 		coevol = battle.coevolutionBattle(pso.getPokemon(), pso.getPokemon());
-		//System.out.println("hey");
 
+		//System.out.println("hey");
+		//System.out.println(coevol.getEevee1().get(1).getLevel());
 
 
 

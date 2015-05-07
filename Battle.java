@@ -30,31 +30,33 @@ public class Battle {
 		 for(int i=0; i<eevees.size(); i++){
 		 	eevees.get(i).powerUp();
 		 }
-		 System.out.println(eevees.get(1).getHealth());
+		 //System.out.println(eevees.get(1).getHealth());
 		 for(int i=0; i<battleCrew.size(); i++){
 		 	battleCrew.get(i).powerUp();
 		 }
 
-		 System.out.println("meep");
+		 //System.out.println("meep");
 		for(int i=0; i<eevees.size(); i++){	
-			System.out.println(eevees.size());
-			System.out.println(battleCrew.size());
+			//System.out.println(eevees.size());
+			//System.out.println(battleCrew.size());
 			for(int j=0; j<battleCrew.size(); j++){ 
-				System.out.println("meep");
+				//System.out.println("meep");
 				while((eevees.get(i).getHealth()>0) && (battleCrew.get(j).getHealth()>0)){
 		 			if((alternate%2)==0){
 		 				newHP = damageFunction(eevees.get(i), battleCrew.get(j));
 		 				battleCrew.get(j).setHealth(newHP);
-		 				System.out.println(battleCrew.get(1).getHealth());
+		 				//System.out.println(" b " +battleCrew.get(j).getHealth());
 		 			}
 		 			if((alternate%2)==1){
 		 				newHP = damageFunction(battleCrew.get(j), eevees.get(i));
 		 				eevees.get(i).setHealth(newHP);
-		 				System.out.println(eevees.get(1).getHealth());
+		 				//System.out.println(" e " + eevees.get(i).getHealth());
 		 			}
 		 			alternate++;
 		 		}	
 		 		
+		 		//System.out.println("finished");
+
 		 		if(eevees.get(i).getHealth()<0){
 		 			battleHealth[j] = 0;
 		 		}
@@ -81,7 +83,7 @@ public class Battle {
 		 			battleWon[j] = false;
 		 		}
 
-
+		 		eevees.get(i).powerUp();
 		 		battleCrew.get(j).powerUp();
 		 		alternate = 0;
 			}
@@ -139,14 +141,17 @@ public class Battle {
 		 			if((alternate%2)==0){
 		 				newHP = damageFunction(eevees1.get(i), eevees2.get(j));
 		 				eevees2.get(j).setHealth(newHP);
+		 				//System.out.println(" 2 " + eevees2.get(j).getHealth());
 		 			}
 		 			if((alternate%2)==1){
 		 				newHP = damageFunction(eevees2.get(j), eevees1.get(i));
 		 				eevees1.get(i).setHealth(newHP);
+		 				//System.out.println(" 1 " + eevees1.get(i).getHealth());
 		 			}
 		 			alternate++;
 		 		}	
-		 		
+		 		//System.out.println("finished");
+
 		 		//eevee1 updates
 		 		if(eevees1.get(i).getHealth()<0){
 		 			battleHealth1[j] = 0;
@@ -201,6 +206,7 @@ public class Battle {
 		 			battleWon2[j][i] = false;
 		 		}
 
+		 		eevees1.get(i).powerUp();
 		 		eevees2.get(j).powerUp();
 		 		alternate = 0;
 
