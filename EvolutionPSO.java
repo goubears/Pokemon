@@ -80,11 +80,11 @@ public class EvolutionPSO {
         neighborhood.assignNeighborhood(pokemon);
 
         //update each Pokemon's stats according to its personal and global bests
-        System.out.println("Population size: " + POPULATION_SIZE);
+        //System.out.println("Population size: " + POPULATION_SIZE);
         Vector<Integer> currNeighborhood;
         for (int i = 0; i < pokemon.size(); i++){
             currNeighborhood = neighborhood.getNeighborhood(i);
-            System.out.println("Neighborhood size: " + currNeighborhood.size());
+           // System.out.println("Neighborhood size: " + currNeighborhood.size());
 
             
             //find neighborhood best

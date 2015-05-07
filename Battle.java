@@ -61,6 +61,7 @@ public class Battle {
 		 			battleHealth[j] = 0;
 		 		}
 		 		else{
+		 			//System.out.println(" j " +  j + " i " + i);
 		 			battleHealth[j] = eevees.get(i).getHealth();
 		 		}
 		 		if(eevees.get(i).getAttack()<0){
@@ -99,6 +100,7 @@ public class Battle {
 		 	eevees.get(i).levelUp(eevees.get(i).getBattleWinB());
 		}
 
+		battleCrew = new Vector<Pokemon>();
 		return eevees;
 
 	 }
@@ -158,6 +160,7 @@ public class Battle {
 		 		}
 		 		else{
 		 			battleHealth1[j] = eevees1.get(i).getHealth();
+
 		 		}
 		 		if(eevees1.get(i).getAttack()<0){
 		 			battleAttack1[j] = 0;
