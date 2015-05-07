@@ -30,6 +30,9 @@ import java.util.Random;
 
 public class EvolutionPSO {
 	
+    //instance of Main to update bests
+    private static Main main = new Main();
+    
     //Vectors and arrays for storing tours the ants make and paths between cities
     private Vector<Pokemon> pokemon;
     private  Vector<Pokemon> newGeneration;
@@ -56,7 +59,7 @@ public class EvolutionPSO {
     //instance of Neighborhood to call appropriate methods
     //private Neighborhood neighborhood = new Neighborhood();
 
-    public Vector<Pokemon> evolutionPSO(Vector<Pokemon> breedingPopulation, int algo)
+    public Vector<Pokemon> evolutionPSO(Vector<Pokemon> breedingPopulation, int algo, int battleType)
     {
         //set up variables
         pokemon = breedingPopulation;
@@ -64,14 +67,17 @@ public class EvolutionPSO {
         POPULATION_SIZE = pokemon.size();
         
         //System.out.println("I AM A PROGRAM. HEAR ME ROAR!");
-        //start timer
-        long startTime = System.currentTimeMillis();
-        long endTime = 0;
-        duration = 0;
 
-        //update time
-        endTime = System.currentTimeMillis();
-        duration = (endTime - startTime)/1000;
+        //update global bests
+        double bestFitness = Double.NEGATIVE_INFINITY;
+        Pokemon bestIndividual = null;
+        for (Pokemon p : pokemon){
+            if (p.getFitness() > bestFitness){
+                bestFitness = p.getFitness();
+                bestIndividual = p;
+            }
+        }
+        main.updateBest(bestIndividual, battleType);
 
         //generatePokemon();
 
@@ -190,6 +196,7 @@ public class EvolutionPSO {
 
             }
         }
+
 
         System.out.println("New population size: " + newGeneration.size());
         return newGeneration;

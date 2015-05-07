@@ -30,19 +30,15 @@ public class Main {
 	private static int iterations;
 
 	private static final int LEVELUP_THRESHOLD = 3;
-
-
-
-
+	private static final int HYBRID = 0;
+	private static final int COEVOLUTION_ONE = 1;
+	private static final int COEVOLUTION_TWO = 2;
+	private static long duration;
 
 	//main method
 	public static void main(String[] args) 
 	{
-
-		//VARIABLES FROM COMMAND LINE
-		//EVEN NUMBER OF EEVEES (POPULATION SIZE)
-		//ITERATIONS
-
+		//read in from command line
 		populationSize = Integer.parseInt(args[0]);
 		iterations = Integer.parseInt(args[1]);
 
@@ -54,6 +50,11 @@ public class Main {
 
 		//START OF CYCLE
 		int numIterations = 0;
+		//start timer
+        long startTime = System.currentTimeMillis();
+        long endTime = 0;
+        duration = 0;
+
 		while (numIterations < iterations){
 
 			//send pokemon populations into battle
@@ -63,18 +64,63 @@ public class Main {
 			coevolutionTwo = coevol.getEevee2();
 
 			//genetic algorithm and PSO
-			hybrid = pso.evolutionPSO(hybrid, LEVELUP_THRESHOLD);
-			coevolutionOne = pso.evolutionPSO(coevolutionOne, LEVELUP_THRESHOLD);
-			coevolutionTwo = pso.evolutionPSO(coevolutionTwo, LEVELUP_THRESHOLD);
+			hybrid = pso.evolutionPSO(hybrid, LEVELUP_THRESHOLD, HYBRID);
+			coevolutionOne = pso.evolutionPSO(coevolutionOne, LEVELUP_THRESHOLD, COEVOLUTION_ONE);
+			coevolutionTwo = pso.evolutionPSO(coevolutionTwo, LEVELUP_THRESHOLD, COEVOLUTION_TWO);
 
 			numIterations++;
 		}
-		
-		//RESTART
-		//go back to the start of the cycle and use the newly created population of eevee's
-		//keep repeating this cycle for a set number of generations, or until a pokemon reaches level 50
-		
-		//DONE
-		//print out results: best pokemon - it's stats, probabilities, and moves
+
+		//update time
+        endTime = System.currentTimeMillis();
+        duration = (endTime - startTime);
+
+		//print out our findings
+        System.out.println("\n******************* Elitist Ant Algorithm Results *******************");
+        System.out.println("Please note that we have added a consequence for failure. Any contact with the chamber floor will result in an 'unsatisfactory' mark on your official testing record, followed by death. Good luck!");
+        //we'll need to print out the name of the file we are reading. This should come from the user-input parsing part...maybe make it a global variable?
+
+        //same for NUM_VARIABLES and number of clauses
+        System.out.println("Number of Pokemon: " + populationSize);
+        System.out.println("Number of iterations: " + iterations);
+        
+        // if (bestLength < TARGET_OPTIMUM)
+        // {
+        //     System.out.println("Target optimum reached early.");   
+        // }    
+        
+        // if (duration > TIME_LIMIT)
+        // {
+        //     System.out.println("Time limit reached.");
+        // }
+       
+        System.out.println("Hybrid battle best pokemon: ");
+        globalBestHybrid.print();
+        System.out.println("Coevolution one battle best pokemon: ");
+        globalBestCoevolutionOne.print();
+        System.out.println("Coevolution two battle best pokemon: ");
+        globalBestCoevolutionTwo.print();
+        
+        System.out.println("\nThis method took: " + duration + " milliseconds.");
+
 	}
+
+
+	//function for EvolutionPSO to update global bests
+	public static void updateBest(Pokemon best, int population){
+
+		if (population == HYBRID){
+			globalBestHybrid = best;
+			bestFitnessHybrid = best.getFitness();
+		}
+		else if (population == COEVOLUTION_ONE){
+			globalBestCoevolutionOne = best;
+			bestFitnessCoevolutionOne = best.getFitness();
+		}
+		else if (population == COEVOLUTION_TWO){
+			globalBestCoevolutionTwo = best;
+			bestFitnessCoevolutionTwo = best.getFitness();
+		}
+	}
+	
 }
