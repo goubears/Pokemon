@@ -32,14 +32,12 @@ public class EvolutionPSO {
 	
     //Vectors and arrays for storing tours the ants make and paths between cities
     private Vector<Pokemon> pokemon;
-    private  Vector<Pokemon> newGeneration = new Vector<Pokemon>();
+    private  Vector<Pokemon> newGeneration;
 
     //named constants for Pokemon and Move parameters
     private final int NUM_MOVES = 3;
     private final int NUM_PROBABILITIES = 3;
 
-    
-    //private static int NUM_ITERATIONS;
     private  final double CROSSOVER_PROBABILITY = 0.7;
     private final double MUTATION_PROBABILITY = 0.01;
 
@@ -56,7 +54,7 @@ public class EvolutionPSO {
     private  long duration;
 
     //instance of Neighborhood to call appropriate methods
-    private Neighborhood neighborhood = new Neighborhood();
+    //private Neighborhood neighborhood = new Neighborhood();
 
     public Vector<Pokemon> evolutionPSO(Vector<Pokemon> breedingPopulation, int algo)
     {
@@ -64,10 +62,8 @@ public class EvolutionPSO {
         pokemon = breedingPopulation;
         ALGORITHM = algo;
         POPULATION_SIZE = pokemon.size();
-
-    //public static void main (String[] args){
         
-        System.out.println("I AM A PROGRAM. HEAR ME ROAR!");
+        //System.out.println("I AM A PROGRAM. HEAR ME ROAR!");
         //start timer
         long startTime = System.currentTimeMillis();
         long endTime = 0;
@@ -77,16 +73,18 @@ public class EvolutionPSO {
         endTime = System.currentTimeMillis();
         duration = (endTime - startTime)/1000;
 
-        //eneratePokemon();
+        //generatePokemon();
 
         //initialize neighborhoods structures for Particle Swarm Optimization techniques
+        Neighborhood neighborhood = new Neighborhood();
         neighborhood.assignNeighborhood(pokemon);
 
         //update each Pokemon's stats according to its personal and global bests
+        System.out.println("Population size: " + POPULATION_SIZE);
         Vector<Integer> currNeighborhood;
         for (int i = 0; i < pokemon.size(); i++){
             currNeighborhood = neighborhood.getNeighborhood(i);
-            //System.out.println("Neighborhood size: " + currNeighborhood.size());
+            System.out.println("Neighborhood size: " + currNeighborhood.size());
 
             
             //find neighborhood best
@@ -158,6 +156,8 @@ public class EvolutionPSO {
             //breedingPool.get(i).print();
         }
 
+        newGeneration = new Vector<Pokemon>();
+
         //loop through breeding pairs, make have each make two babies
         for (int i = 0; i < breedingPool.size(); i = i + 2){
             //System.out.println("Index: " + i);
@@ -191,6 +191,7 @@ public class EvolutionPSO {
             }
         }
 
+        System.out.println("New population size: " + newGeneration.size());
         return newGeneration;
 		
         //print out our findings

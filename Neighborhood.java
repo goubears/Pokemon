@@ -55,7 +55,7 @@ public class Neighborhood {
 						 
 						pokemonNeighborhoods.get(j).add(i);
 						counter++;
-						System.out.println(j); //this prints out the neighborhood
+						//System.out.println(j); //this prints out the neighborhood
 					}
 					
 				}

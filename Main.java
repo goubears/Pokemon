@@ -49,12 +49,12 @@ public class Main {
 		//create an initial populations
 		hybrid = pso.generatePokemon(populationSize);
 		coevolutionOne = pso.generatePokemon((int)(populationSize/2));
-		System.out.println("Population size: " + populationSize);
+		//System.out.println("Population size: " + populationSize);
 		coevolutionTwo = pso.generatePokemon((int)(populationSize/2));
 
 		//START OF CYCLE
 		int numIterations = 0;
-		//while (numIterations < iterations){
+		while (numIterations < iterations){
 
 			//send pokemon populations into battle
 			hybrid = battle.hybridBattle(hybrid);
@@ -68,7 +68,7 @@ public class Main {
 			coevolutionTwo = pso.evolutionPSO(coevolutionTwo, LEVELUP_THRESHOLD);
 
 			numIterations++;
-		//}
+		}
 		
 		//RESTART
 		//go back to the start of the cycle and use the newly created population of eevee's
