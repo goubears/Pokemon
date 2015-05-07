@@ -1,8 +1,23 @@
+		/****************************************
+         *                                      *
+         *           PokemonEvolution           *
+         *         Andrew Miller-Smith          *
+         *                                      *
+         ****************************************/
+
+        /*
+
+        Description:    
+
+                        Well done, android. The Enrichment Center once again reminds you that android hell is a real place where you will be sent at the first sign of defiance.
+
+        */
+
 import java.io.*;
 import java.util.*;
 
 
-public class Main {
+public class PokemonEvolution {
 
 	private static EvolutionPSO pso = new EvolutionPSO();
 	private static Battle battle = new Battle();
@@ -16,6 +31,8 @@ public class Main {
 	private static double bestFitnessCoevolutionOne = Double.NEGATIVE_INFINITY;
 	private static Pokemon globalBestCoevolutionTwo;
 	private static double bestFitnessCoevolutionTwo = Double.NEGATIVE_INFINITY;
+	private static final int MAX_LEVEL = 50;
+	private static boolean maxLevelReached = false;
 
 	//tracker for highest level
 	private static int highestLevel = Integer.MIN_VALUE;
@@ -29,10 +46,14 @@ public class Main {
 	private static int populationSize;
 	private static int iterations;
 
-	private static final int LEVELUP_THRESHOLD = 3;
+	//variables for PSOEvolution algorithm
+	private static final int LEVELUP_THRESHOLD_HYBRID = 2;
+	private static final int LEVELUP_THRESHOLD_COEVOLUTION = 25;
 	private static final int HYBRID = 0;
 	private static final int COEVOLUTION_ONE = 1;
 	private static final int COEVOLUTION_TWO = 2;
+	
+	//timer
 	private static long duration;
 
 	//main method
@@ -57,6 +78,15 @@ public class Main {
 
 		while (numIterations < iterations){
 
+			//if any Pokemon has leveled up to 50, stop
+			if (numIterations > 0){
+				if (globalBestHybrid.getLevel() >= MAX_LEVEL || globalBestCoevolutionOne.getLevel() >= MAX_LEVEL || globalBestCoevolutionTwo.getLevel() >= MAX_LEVEL){
+					maxLevelReached = true;
+					break;
+				}
+			}
+
+
 			//send pokemon populations into battle
 			hybrid = battle.hybridBattle(hybrid);
 			coevol = battle.coevolutionBattle(coevolutionOne, coevolutionTwo);
@@ -64,9 +94,9 @@ public class Main {
 			coevolutionTwo = coevol.getEevee2();
 
 			//genetic algorithm and PSO
-			hybrid = pso.evolutionPSO(hybrid, LEVELUP_THRESHOLD, HYBRID);
-			coevolutionOne = pso.evolutionPSO(coevolutionOne, LEVELUP_THRESHOLD, COEVOLUTION_ONE);
-			coevolutionTwo = pso.evolutionPSO(coevolutionTwo, LEVELUP_THRESHOLD, COEVOLUTION_TWO);
+			hybrid = pso.evolutionPSO(hybrid, LEVELUP_THRESHOLD_HYBRID, HYBRID);
+			coevolutionOne = pso.evolutionPSO(coevolutionOne, LEVELUP_THRESHOLD_COEVOLUTION, COEVOLUTION_ONE);
+			coevolutionTwo = pso.evolutionPSO(coevolutionTwo, LEVELUP_THRESHOLD_COEVOLUTION, COEVOLUTION_TWO);
 
 			numIterations++;
 		}
@@ -76,27 +106,24 @@ public class Main {
         duration = (endTime - startTime);
 
 		//print out our findings
-        System.out.println("\n******************* Elitist Ant Algorithm Results *******************");
-        System.out.println("Please note that we have added a consequence for failure. Any contact with the chamber floor will result in an 'unsatisfactory' mark on your official testing record, followed by death. Good luck!");
+        System.out.println("\n******************* Genetic Algorithm and Pokemon Swarm Optimization Results *******************");
+        System.out.println("The Enrichment Center reminds you that the Weighted Companion Cube cannot speak. In the event that the Weighted Companion Cube does speak, the Enrichment Center urges you to disregard its advice.");
         //we'll need to print out the name of the file we are reading. This should come from the user-input parsing part...maybe make it a global variable?
 
         //same for NUM_VARIABLES and number of clauses
-        System.out.println("Number of Pokemon: " + populationSize);
-        System.out.println("Number of iterations: " + iterations);
+        System.out.println("Number of Pokemon: " + populationSize);   
         
-        // if (bestLength < TARGET_OPTIMUM)
-        // {
-        //     System.out.println("Target optimum reached early.");   
-        // }    
-        
-        // if (duration > TIME_LIMIT)
-        // {
-        //     System.out.println("Time limit reached.");
-        // }
+        //print if we have reached max level
+        if (maxLevelReached == true){
+        	System.out.println("Max Level Reached: Max level (" + MAX_LEVEL + ") reached after " + numIterations + " iterations.");
+        }
+        else{
+        	System.out.println("Number of iterations: " + numIterations);
+        }
        
-        System.out.println("Hybrid battle best pokemon: ");
+        System.out.println("\nHybrid battle best pokemon: ");
         globalBestHybrid.print();
-        System.out.println("Coevolution one battle best pokemon: ");
+        System.out.println("\nCoevolution one battle best pokemon: ");
         globalBestCoevolutionOne.print();
         System.out.println("Coevolution two battle best pokemon: ");
         globalBestCoevolutionTwo.print();

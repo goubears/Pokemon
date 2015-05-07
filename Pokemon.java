@@ -2,7 +2,7 @@
 import java.util.*;
 import java.lang.Math;
 	 
-//Make getters and setters
+
 
 public class Pokemon {
 
@@ -398,35 +398,35 @@ public class Pokemon {
 	public void mutate(double mutationProbability, Move[] possibleMoves)
 	{
 		//new moveRandomDouble between 0 and 1
-		double moveRandomDouble = random.nextDouble();
-		if (moveRandomDouble<mutationProbability)
-		{
-			boolean moveChanged = false;
-			while (moveChanged==false)
-			{
-				//new randomMove
-				int randomMove = random.nextInt(possibleMoves.length);
-				if (move1!=possibleMoves[randomMove] && move2!=possibleMoves[randomMove] && move3!=possibleMoves[randomMove])
-				{
-					//new randomNumber
-					int randomNumber = random.nextInt(3);
-					if (randomNumber==0)
-					{
-						move1 = possibleMoves[randomMove];
-					}
-					else if (randomNumber==1)
-					{
-						move2 = possibleMoves[randomMove];
-					}
-					else
-					{
-						move3 = possibleMoves[randomMove];
-					}
+		// double moveRandomDouble = random.nextDouble();
+		// if (moveRandomDouble<mutationProbability)
+		// {
+		// 	boolean moveChanged = false;
+		// 	while (moveChanged==false)
+		// 	{
+		// 		//new randomMove
+		// 		int randomMove = random.nextInt(possibleMoves.length);
+		// 		if (move1!=possibleMoves[randomMove] && move2!=possibleMoves[randomMove] && move3!=possibleMoves[randomMove])
+		// 		{
+		// 			//new randomNumber
+		// 			int randomNumber = random.nextInt(3);
+		// 			if (randomNumber==0)
+		// 			{
+		// 				move1 = possibleMoves[randomMove];
+		// 			}
+		// 			else if (randomNumber==1)
+		// 			{
+		// 				move2 = possibleMoves[randomMove];
+		// 			}
+		// 			else
+		// 			{
+		// 				move3 = possibleMoves[randomMove];
+		// 			}
 
-					moveChanged = true;
-				}
-			}	
-		}
+		// 			moveChanged = true;
+		// 		}
+		// 	}	
+		// }
 
 		//new probabilityRandomDouble between 0 and 1
 		double probabilityRandomDouble = random.nextDouble();

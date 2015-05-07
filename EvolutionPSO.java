@@ -31,7 +31,7 @@ import java.util.Random;
 public class EvolutionPSO {
 	
     //instance of Main to update bests
-    private static Main main = new Main();
+    private static PokemonEvolution pokemonEvolution = new PokemonEvolution();
     
     //Vectors and arrays for storing tours the ants make and paths between cities
     private Vector<Pokemon> pokemon;
@@ -51,7 +51,7 @@ public class EvolutionPSO {
     private  Random rand = new Random();
 
     //named constants assigned upon receiving parameters
-    private int POPULATION_SIZE;         //ADELA CHANGED FROM 100 TO 5.
+    private int POPULATION_SIZE;
     private  int ALGORITHM;
     private  int totalIterations;
     private  long duration;
@@ -77,7 +77,7 @@ public class EvolutionPSO {
                 bestIndividual = p;
             }
         }
-        main.updateBest(bestIndividual, battleType);
+        pokemonEvolution.updateBest(bestIndividual, battleType);
 
         //generatePokemon();
 
@@ -90,6 +90,10 @@ public class EvolutionPSO {
         Vector<Integer> currNeighborhood;
         for (int i = 0; i < pokemon.size(); i++){
             currNeighborhood = neighborhood.getNeighborhood(i);
+
+            if (currNeighborhood == null){
+                pokemon.get(i).print();
+            }
            // System.out.println("Neighborhood size: " + currNeighborhood.size());
 
             
@@ -198,36 +202,9 @@ public class EvolutionPSO {
         }
 
 
-        System.out.println("New population size: " + newGeneration.size());
+        //System.out.println("New population size: " + newGeneration.size());
         return newGeneration;
 		
-        //print out our findings
-        // System.out.println("\n******************* Elitist Ant Algorithm Results *******************");
-        // System.out.println("Please note that we have added a consequence for failure. Any contact with the chamber floor will result in an 'unsatisfactory' mark on your official testing record, followed by death. Good luck!");
-        //we'll need to print out the name of the file we are reading. This should come from the user-input parsing part...maybe make it a global variable?
-        // System.out.println("Name of file: " + FILE_NAME);
-
-        //same for NUM_VARIABLES and number of clauses
-        // System.out.println("Number of cities: " + NUM_CITIES);
-        // System.out.println("Number of ants: " + NUM_ANTS);
-        
-        // if (bestLength < TARGET_OPTIMUM)
-        // {
-        //     System.out.println("Target optimum reached early.");   
-        // }    
-        
-        // if (duration > TIME_LIMIT)
-        // {
-        //     System.out.println("Time limit reached.");
-        // }
-       
-        // System.out.println("Number of iterations: " + totalIterations);
-        
-        //we know how many clauses we have satisfied
-        // System.out.println("Length of shortest path: " + bestLength);
-        
-        // System.out.println("\nThis method took: " + duration + " milliseconds.");
-
     }
 
     public  void makeBabies(Pokemon parentOne, Pokemon parentTwo){
@@ -266,8 +243,9 @@ public class EvolutionPSO {
                     babyOneMoves[i] = curr;
                     babyTwoMoves[i] = curr;
                     movesAssigned[i] = true;
-
+                    
                     //System.out.println("Matched move: " + curr.getMoveName());
+                    break;
                 }
             }
         }       
@@ -275,6 +253,7 @@ public class EvolutionPSO {
         for (int i = 0; i < NUM_MOVES; i++){
             while (movesAssigned[i] == false){
 
+                boolean alreadyAssigned = false;
                 Move newMove = new Move(parentOne.getName());
                 for (int j = 0; j < NUM_MOVES; j++){
                     if (babyOneMoves[j] != null && !babyOneMoves[j].getMoveName().equals(newMove.getMoveName())){
