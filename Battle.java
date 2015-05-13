@@ -1,360 +1,422 @@
-import java.io.*;
+
 import java.util.*;
-import java.util.Random;
 
 public class Battle {
 
-	Vector<Pokemon> battleCrew = new Vector<Pokemon>();
-	Random rand = new Random();
-	final private int NUMBEROFBATTLECREW = 5;
-	
-	 public Vector<Pokemon> hybridBattle(Vector<Pokemon> eevees)
-	 {
+	//final private int EEVEE = 1; 
+	final private int PIKACHU = 2;
+	final private int CHARMANDER = 3;
+	final private int MEOWTH = 4;
+	final private int HOUNDOUR = 5;
+	final private int KOFFING = 6;
 
-	 	int alternate = 0;
-	 	double newHP = Double.MAX_VALUE;
-	 	double[] battleHealth = new double[NUMBEROFBATTLECREW]; 
-	 	double[] battleAttack = new double[NUMBEROFBATTLECREW]; 
-	 	double[] battleDefense = new double[NUMBEROFBATTLECREW]; 
-	 	boolean[] battleWon = new boolean[NUMBEROFBATTLECREW];
-	 	double[] battleResults = new double[NUMBEROFBATTLECREW];
+	final private int NUMBER_OF_BATTLE_CREW = 5;
 
-	 	initBattleCrew();
+	private ArrayList<Pokemon> battleCrew = new ArrayList<Pokemon>(NUMBER_OF_BATTLE_CREW);
+	private Random random = new Random();
 
-	 	//initialize battleResults to 0
-	 	for(int i=0; i<NUMBEROFBATTLECREW; i++){
-	 		battleResults[i] = 0;
-	 	}
+	/*
+	 * Hybrid algorithm's battle function 
+	 */
+	public ArrayList<Pokemon> hybridBattle(ArrayList<Pokemon> eevees)
+	{
+		int alternate = 0;
+		int maxNumberOfTurns = 0;
+		double damage = 0.0;
+		double[] battleHealth = new double[NUMBER_OF_BATTLE_CREW]; 
+		double[] battleAttack = new double[NUMBER_OF_BATTLE_CREW]; 
+		double[] battleDefense = new double[NUMBER_OF_BATTLE_CREW]; 
+		boolean[] battleWon = new boolean[NUMBER_OF_BATTLE_CREW];
+		double[] battleResults = new double[NUMBER_OF_BATTLE_CREW];
 
-	 	//powers ups for eevees and battle crew
-		 for(int i=0; i<eevees.size(); i++){
-		 	eevees.get(i).powerUp();
-		 }
-		 //System.out.println(eevees.get(1).getHealth());
-		 for(int i=0; i<battleCrew.size(); i++){
-		 	battleCrew.get(i).powerUp();
-		 }
+		//initialize battleResults to 0
+		for (int i=0; i<NUMBER_OF_BATTLE_CREW; i++)
+		{
+			battleResults[i] = 0;
+		}
 
-		 //System.out.println("meep");
-		for(int i=0; i<eevees.size(); i++){	
-			//System.out.println(eevees.size());
-			//System.out.println(battleCrew.size());
-			for(int j=0; j<battleCrew.size(); j++){ 
-				//System.out.println("meep");
-				while((eevees.get(i).getHealth()>0) && (battleCrew.get(j).getHealth()>0)){
-		 			if((alternate%2)==0){
-		 				newHP = damageFunction(eevees.get(i), battleCrew.get(j));
-		 				battleCrew.get(j).setHealth(newHP);
-		 				//System.out.println(" b " +battleCrew.get(j).getHealth());
-		 			}
-		 			if((alternate%2)==1){
-		 				newHP = damageFunction(battleCrew.get(j), eevees.get(i));
-		 				eevees.get(i).setHealth(newHP);
-		 				//System.out.println(" e " + eevees.get(i).getHealth());
-		 			}
-		 			alternate++;
-		 		}	
-		 		
-		 		//System.out.println("finished");
+		//initialize battle arrays and power up eevees 
+		for (int i=0; i<eevees.size(); i++)
+		{
+			eevees.get(i).initializeBattleArrays(NUMBER_OF_BATTLE_CREW);
+			eevees.get(i).powerUp();
+		}
 
-		 		if(eevees.get(i).getHealth()<0){
-		 			battleHealth[j] = 0;
-		 		}
-		 		else{
-		 			//System.out.println(" j " +  j + " i " + i);
-		 			battleHealth[j] = eevees.get(i).getHealth();
-		 		}
-		 		if(eevees.get(i).getAttack()<0){
-		 			battleAttack[j] = 0;
-		 		}
-		 		else{
-		 			battleAttack[j] = eevees.get(i).getAttack();
-		 		}
-		 		if(eevees.get(i).getDefense()<0){
-		 			battleDefense[j] = 0;
-		 		}
-		 		else{
-		 			battleDefense[j] = eevees.get(i).getDefense();
-		 		}
-		 		if(eevees.get(i).getHealth()>0){
-		 			battleWon[j] = true;
-		 			battleResults[j] += 1.0;
-		 		}
-		 		else{
-		 			battleWon[j] = false;
-		 		}
+		//battle begins
+		for (int i=0; i<eevees.size(); i++)
+		{	
+			//initialize the battle opponents
+			initializeBattleCrew(eevees.get(i).getLevel());
+			
+			//battle each opponent
+			for (int j=0; j<NUMBER_OF_BATTLE_CREW; j++) 
+			{ 
+				//eevee starting stats
+				eevees.get(i).setStatus(0);
+				eevees.get(i).setAccuracy(1.0);
+				eevees.get(i).setHealthInBattle(eevees.get(i).getHealth());
+				eevees.get(i).setAttackInBattle(eevees.get(i).getAttack());
+				eevees.get(i).setDefenseInBattle(eevees.get(i).getDefense());
+				
+				//opponent starting stats
+				battleCrew.get(j).setStatus(0);
+				battleCrew.get(j).setAccuracy(1.0);
+				battleCrew.get(j).setHealthInBattle(battleCrew.get(j).getHealth());
+				battleCrew.get(j).setAttackInBattle(battleCrew.get(j).getAttack());
+				battleCrew.get(j).setDefenseInBattle(battleCrew.get(j).getDefense());
+				
+				//battle
+				while ((eevees.get(i).getHealthInBattle()>0) && (battleCrew.get(j).getHealthInBattle()>0) && (maxNumberOfTurns!=150)) //both pokemon still alive
+				{
+					if ((alternate%2)==0) //eevee moves first
+					{
+						damage = damageFunction(eevees.get(i), battleCrew.get(j));
+						battleCrew.get(j).setHealthInBattle(battleCrew.get(j).getHealthInBattle()-damage);
+					}
+					if ((alternate%2)==1) //opponent moves first
+					{
+						damage = damageFunction(battleCrew.get(j), eevees.get(i));
+						eevees.get(i).setHealthInBattle(eevees.get(i).getHealthInBattle()-damage);
+					}
+					
+					alternate++;
+					maxNumberOfTurns++;
 
-		 		eevees.get(i).powerUp();
-		 		battleCrew.get(j).powerUp();
-		 		alternate = 0;
+					if (maxNumberOfTurns == 150)
+					{
+						eevees.get(i).setHealthInBattle(0);
+					}
+				}
+				alternate = 0;
+				maxNumberOfTurns = 0;
+
+				//battle results
+				if (eevees.get(i).getHealthInBattle()<=0)
+				{
+					battleHealth[j] = 0;
+					battleWon[j] = false;
+				}
+				else
+				{
+					battleHealth[j] = eevees.get(i).getHealthInBattle();
+					battleWon[j] = true;
+					battleResults[j] += 1.0;
+				}
+
+				if (eevees.get(i).getAttackInBattle()<=0)
+				{
+					battleAttack[j] = 0;
+				}
+				else
+				{
+					battleAttack[j] = eevees.get(i).getAttackInBattle();
+				}
+
+				if (eevees.get(i).getDefenseInBattle()<=0)
+				{
+					battleDefense[j] = 0;
+				}
+				else
+				{
+					battleDefense[j] = eevees.get(i).getDefenseInBattle();
+				}
 			}
-
-			eevees.get(i).setBattleHP(battleHealth);
-			eevees.get(i).setBattleAtt(battleAttack);
-			eevees.get(i).setBattleDef(battleDefense);
-			eevees.get(i).setBattleWinB(battleWon);
+			eevees.get(i).setBattleHealth(battleHealth);
+			eevees.get(i).setBattleAttack(battleAttack);
+			eevees.get(i).setBattleDefense(battleDefense);
+			eevees.get(i).setBattleWin(battleWon);
 		}
 
-		for(int i=0; i<eevees.size(); i++){	
-			eevees.get(i).calculateFitness(eevees.get(i).getBattleHP(), eevees.get(i).getBattleAtt(), eevees.get(i).getBattleDef(), eevees.get(i).getBattleWinB(), battleResults);
-		 	eevees.get(i).levelUp(eevees.get(i).getBattleWinB());
+		//calculate eevee fitness and update level
+		for (int i=0; i<eevees.size(); i++)
+		{	
+			eevees.get(i).calculateFitness(eevees.get(i).getBattleHealth(), eevees.get(i).getBattleAttack(), eevees.get(i).getBattleDefense(), eevees.get(i).getBattleWin(), battleResults);
+			eevees.get(i).levelUp(eevees.get(i).getBattleWin());
 		}
 
-		battleCrew = new Vector<Pokemon>();
 		return eevees;
+	}
 
-	 }
+	/*
+	 * Initializes the battle crew's stats
+	 */ 
+	public void initializeBattleCrew(int level)
+	{
+		battleCrew.clear();
+		battleCrew.add(new Pokemon(PIKACHU, -1, 100));
+		battleCrew.add(new Pokemon(CHARMANDER, -1, 100));
+		battleCrew.add(new Pokemon(MEOWTH, -1, 100));
+		battleCrew.add(new Pokemon(HOUNDOUR, -1, 100));
+		battleCrew.add(new Pokemon(KOFFING, -1, 100));
 
+		//power up battle crew 
+		for (int j=0; j<battleCrew.size(); j++)
+		{
+			battleCrew.get(j).setLevel(level);
+			battleCrew.get(j).updateStats();
+			battleCrew.get(j).setHealthProbability(1/3);
+			battleCrew.get(j).setAttackProbability(1/3);
+			battleCrew.get(j).setDefenseProbability(1/3);
+			battleCrew.get(j).powerUp();
+		}
+	}
 
-	 //eevee1 gets updated while fighting eevee2
-	 public Coevolution coevolutionBattle(Vector<Pokemon> eevees1, Vector<Pokemon> eevees2){
-	 	int alternate = 0;
-	 	double newHP = Double.MAX_VALUE;
-	 	int popSize = eevees1.size();
-	 	//eevee1 stats
-	 	double[] battleHealth1 = new double[popSize]; 
-	 	double[] battleAttack1 = new double[popSize]; 
-	 	double[] battleDefense1 = new double[popSize];
-	 	boolean[] battleWon1 = new boolean[popSize];
-		double[] battleResults1 = new double[popSize];
-	 	//eevee2 stats
-	 	double[][] battleHealth2 = new double[popSize][popSize]; 
-	 	double[][] battleAttack2 = new double[popSize][popSize]; 
-	 	double[][] battleDefense2 = new double[popSize][popSize];
-	 	boolean[][] battleWon2 = new boolean[popSize][popSize];
-	 	double[] battleResults2 = new double[popSize];
+	/*
+	 * Coevolution algorithm's battle function 
+	 */
+	public Coevolution coevolutionBattle(ArrayList<Pokemon> eevees1, ArrayList<Pokemon> eevees2)
+	{
+		int alternate = 1;
+		int maxNumberOfTurns = 0;
+		double damage = 0.0;
+		int populationSize = eevees1.size();
 
+		//eevee1 stats
+		double[] battleHealth1 = new double[populationSize]; 
+		double[] battleAttack1 = new double[populationSize]; 
+		double[] battleDefense1 = new double[populationSize];
+		boolean[] battleWon1 = new boolean[populationSize];
+		double[] battleResultsAgainstOpponents = new double[populationSize];
 
-	 	//initialize battleResults to 0
-	 	for(int i=0; i<popSize; i++){
-	 		battleResults1[i] = 0;
-	 		battleResults2[i] = 0;
-	 	}
+		//eevee2 stats
+		double battleHealth2; 
+		double battleAttack2; 
+		double battleDefense2;
+		boolean battleWon2;
+		double[] battleResultsAgainstEevees = new double[populationSize];
 
-	 	//powers ups for eevees and eevee battle crew
-		for(int i=0; i<eevees1.size(); i++){
-		 	eevees1.get(i).powerUp();
-		 	eevees2.get(i).powerUp();
+		//initialize battleResults to 0
+		for (int i=0; i<populationSize; i++)
+		{
+			battleResultsAgainstOpponents[i] = 0;
+			battleResultsAgainstEevees[i] = 0;
 		}
 
-		for(int i=0; i<eevees1.size(); i++){	
-			for(int j=0; j<eevees2.size(); j++){ 
-				while((eevees1.get(i).getHealth()>0) && (eevees2.get(j).getHealth()>0)){
-		 			if((alternate%2)==0){
-		 				newHP = damageFunction(eevees1.get(i), eevees2.get(j));
-		 				eevees2.get(j).setHealth(newHP);
-		 				//System.out.println(" 2 " + eevees2.get(j).getHealth());
-		 			}
-		 			if((alternate%2)==1){
-		 				newHP = damageFunction(eevees2.get(j), eevees1.get(i));
-		 				eevees1.get(i).setHealth(newHP);
-		 				//System.out.println(" 1 " + eevees1.get(i).getHealth());
-		 			}
-		 			alternate++;
-		 		}	
-		 		//System.out.println("finished");
-
-		 		//eevee1 updates
-		 		if(eevees1.get(i).getHealth()<0){
-		 			battleHealth1[j] = 0;
-		 		}
-		 		else{
-		 			battleHealth1[j] = eevees1.get(i).getHealth();
-
-		 		}
-		 		if(eevees1.get(i).getAttack()<0){
-		 			battleAttack1[j] = 0;
-		 		}
-		 		else{
-		 			battleAttack1[j] = eevees1.get(i).getAttack();
-		 		}
-		 		if(eevees1.get(i).getDefense()<0){
-		 			battleDefense1[j] = 0;
-		 		}
-		 		else{
-		 			battleDefense1[j] = eevees1.get(i).getDefense();
-		 		}
-		 		if(eevees1.get(i).getHealth()>0){
-		 			battleWon1[j] = true;
-		 			battleResults1[j] += 1.0;
-		 		}
-		 		else{
-		 			battleWon1[j] = false;
-		 		}
-
-		 		//eevee2 updates
-		 		if(eevees2.get(j).getHealth()<0){
-		 			battleHealth2[j][i] = 0;
-		 		}
-		 		else{
-		 			battleHealth2[j][i] = eevees2.get(j).getHealth();
-		 		}
-		 		if(eevees2.get(j).getAttack()<0){
-		 			battleAttack2[j][i] = 0;
-		 		}
-		 		else{
-		 			battleAttack2[j][i] = eevees2.get(j).getAttack();
-		 		}
-		 		if(eevees2.get(j).getDefense()<0){
-		 			battleDefense2[j][i] = 0;
-		 		}
-		 		else{
-		 			battleDefense2[j][i] = eevees2.get(j).getDefense();
-		 		}
-		 		if(eevees2.get(j).getHealth()>0){
-		 			battleWon2[j][i] = true;
-		 			battleResults2[i] += 1.0;
-		 		}
-		 		else{
-		 			battleWon2[j][i] = false;
-		 		}
-
-		 		eevees1.get(i).powerUp();
-		 		eevees2.get(j).powerUp();
-		 		alternate = 0;
-
-			} //j
-
-			eevees1.get(i).setBattleHP(battleHealth1);
-			eevees1.get(i).setBattleAtt(battleAttack1);
-			eevees1.get(i).setBattleDef(battleDefense1);
-			eevees1.get(i).setBattleWinB(battleWon1);
-
-		} //i
-
-		for(int i=0; i<popSize; i++){
-			eevees2.get(i).setBattleHP(battleHealth2[i]);
-			eevees2.get(i).setBattleAtt(battleAttack2[i]);
-			eevees2.get(i).setBattleDef(battleDefense2[i]);
-			eevees2.get(i).setBattleWinB(battleWon2[i]);
+		//powers ups for both populations of eevees
+		for (int i=0; i<populationSize; i++)
+		{
+			eevees1.get(i).initializeBattleArrays(populationSize);
+			eevees1.get(i).powerUp();
+			eevees2.get(i).initializeBattleArrays(populationSize);
+			eevees2.get(i).powerUp();
 		}
 
+		//battle begins
+		for (int i=0; i<populationSize; i++)
+		{	
+			//battle each opponent
+			for (int j=0; j<populationSize; j++) 
+			{ 
+				//eevee1 starting stats
+				eevees1.get(i).setStatus(0);
+				eevees1.get(i).setAccuracy(1.0);
+				eevees1.get(i).setHealthInBattle(eevees1.get(i).getHealth());
+				eevees1.get(i).setAttackInBattle(eevees1.get(i).getAttack());
+				eevees1.get(i).setDefenseInBattle(eevees1.get(i).getDefense());
 
-		for(int i=0; i<popSize; i++){		
-		 	eevees1.get(i).calculateFitness(eevees1.get(i).getBattleHP(), eevees1.get(i).getBattleAtt(), eevees1.get(i).getBattleDef(), eevees1.get(i).getBattleWinB(), battleResults1);
-		 	eevees1.get(i).levelUp(eevees1.get(i).getBattleWinB());
+				//eevee2 starting stats
+				eevees2.get(j).setStatus(0);
+				eevees2.get(j).setAccuracy(1.0);
+				eevees2.get(j).setHealthInBattle(eevees2.get(j).getHealth());
+				eevees2.get(j).setAttackInBattle(eevees2.get(j).getAttack());
+				eevees2.get(j).setDefenseInBattle(eevees2.get(j).getDefense());
+				
+				//battle
+				while ((eevees1.get(i).getHealthInBattle()>0) && (eevees2.get(j).getHealthInBattle()>0) && (maxNumberOfTurns!=150)) //both pokemon still alive
+				{
+					if ((alternate%2)==0) //eevee1 moves first
+					{
+						damage = damageFunction(eevees1.get(i), eevees2.get(j));
+						eevees2.get(j).setHealthInBattle(eevees2.get(j).getHealthInBattle()-damage);
+					}
+					if ((alternate%2)==1) //eevee2 moves first
+					{
+						damage = damageFunction(eevees2.get(j), eevees1.get(i));
+						eevees1.get(i).setHealthInBattle(eevees1.get(i).getHealthInBattle()-damage);
+					}
+					
+					alternate++;
+					maxNumberOfTurns++;
+					
+					if (maxNumberOfTurns == 150)
+					{
+						eevees1.get(i).setHealthInBattle(0);
+						eevees2.get(j).setHealthInBattle(0);
+					}
+				}
+				alternate = 1;
+				maxNumberOfTurns = 0;
 
-		 	eevees2.get(i).calculateFitness(eevees2.get(i).getBattleHP(), eevees2.get(i).getBattleAtt(), eevees2.get(i).getBattleDef(), eevees2.get(i).getBattleWinB(), battleResults2);
-		 	eevees2.get(i).levelUp(eevees2.get(i).getBattleWinB());
+				//eevee1 updates
+				if (eevees1.get(i).getHealthInBattle()<=0)
+				{
+					battleHealth1[j] = 0;
+					battleWon1[j] = false;
+				}
+				else
+				{
+					battleHealth1[j] = eevees1.get(i).getHealthInBattle();
+					battleWon1[j] = true;
+					battleResultsAgainstOpponents[j] += 1.0;
+				}
+				if (eevees1.get(i).getAttackInBattle()<=0)
+				{
+					battleAttack1[j] = 0;
+				}
+				else
+				{
+					battleAttack1[j] = eevees1.get(i).getAttackInBattle();
+				}
+				if (eevees1.get(i).getDefenseInBattle()<=0)
+				{
+					battleDefense1[j] = 0;
+				}
+				else
+				{
+					battleDefense1[j] = eevees1.get(i).getDefenseInBattle();
+				}
+
+				//eevee2 updates
+				if (eevees2.get(j).getHealthInBattle()<=0)
+				{
+					battleHealth2 = 0;
+					battleWon2 = false;
+				}
+				else
+				{
+					battleHealth2 = eevees2.get(j).getHealthInBattle();
+					battleWon2 = true;
+					battleResultsAgainstEevees[i] += 1.0;
+				}
+				if (eevees2.get(j).getAttackInBattle()<=0)
+				{
+					battleAttack2 = 0;
+				}
+				else
+				{
+					battleAttack2 = eevees2.get(j).getAttackInBattle();
+				}
+				if (eevees2.get(j).getDefenseInBattle()<=0)
+				{
+					battleDefense2 = 0;
+				}
+				else
+				{
+					battleDefense2 = eevees2.get(j).getDefenseInBattle();
+				}
+
+				eevees2.get(j).addBattleHealth(i, battleHealth2);
+				eevees2.get(j).addBattleAttack(i, battleAttack2);
+				eevees2.get(j).addBattleDefense(i, battleDefense2);
+				eevees2.get(j).addBattleWin(i, battleWon2);
+
+				alternate = 0;
+			} //end opponent battle
+
+			eevees1.get(i).setBattleHealth(battleHealth1);
+			eevees1.get(i).setBattleAttack(battleAttack1);
+			eevees1.get(i).setBattleDefense(battleDefense1);
+			eevees1.get(i).setBattleWin(battleWon1);
+		} //eevee has battled all opponents
+
+		for (int i=0; i<populationSize; i++)
+		{		
+			eevees1.get(i).calculateFitness(eevees1.get(i).getBattleHealth(), eevees1.get(i).getBattleAttack(), eevees1.get(i).getBattleDefense(), eevees1.get(i).getBattleWin(), battleResultsAgainstOpponents);
+			eevees1.get(i).levelUp(eevees1.get(i).getBattleWin());
+
+			eevees2.get(i).calculateFitness(eevees2.get(i).getBattleHealth(), eevees2.get(i).getBattleAttack(), eevees2.get(i).getBattleDefense(), eevees2.get(i).getBattleWin(), battleResultsAgainstEevees);
+			eevees2.get(i).levelUp(eevees2.get(i).getBattleWin());
 		}
 
 		Coevolution coevolution = new Coevolution(eevees1, eevees2);
 		return coevolution;
-	 }
+	}
 
+	/*
+	 * Calculates damage using battle damage function 
+	 */
+	public double damageFunction(Pokemon attacker, Pokemon opponent)
+	{
+		double damage = 0;
 
-	 public double damageFunction(Pokemon attacker, Pokemon opponent){
-	 	double damage = Double.MAX_VALUE;
-	 	int temp;
-	 	temp = rand.nextInt(3);
-	 	//System.out.println(temp);
-	 	switch(temp){
-	 		case 0:
-	 			damage = ((2*attacker.getLevel()+10)/(250))*(attacker.getAttack()/opponent.getDefense())*attacker.getMoveOne().getAttack()+2;
-	 			break;
-	 		case 1:	
-	 			damage = ((2*attacker.getLevel()+10)/(250))*(attacker.getAttack()/opponent.getDefense())*attacker.getMoveTwo().getAttack()+2;
-	 			break;
-	 		case 2:
-	 			damage = ((2*attacker.getLevel()+10)/(250))*(attacker.getAttack()/opponent.getDefense())*attacker.getMoveThree().getAttack()+2;
-	 			break;
-	 		default: //error
-	 			System.out.println("Error in assigning a random move for a pokemon.");
- 				System.exit(0);
-	 	}
+		if (random.nextDouble()<attacker.getAccuracy()) //chance to make a move
+		{
+			if (attacker.getStatus() == 1 || attacker.getStatus() == 2) //paralyzed or sleeping
+			{
+				if (random.nextDouble()>0.50) //unable to make move
+				{
+					return damage;
+				}
+				else //able to make move
+				{
+					if (attacker.getStatus() == 2) //woke up
+					{
+						attacker.setStatus(0); //back to normal
+					}
+				}
+			}
+			
+			//choose a move
+			int randomMove = random.nextInt(attacker.getSelectedMovesArray().length);
+			Move selectedMove = (attacker.getSelectedMovesArray())[randomMove];
 
-	 	return attacker.getHealth()-damage;
-	 }
+			if (random.nextDouble()<selectedMove.getMoveAccuracy()) //move hit target
+			{
+				int attackerLevel = attacker.getLevel();
+				double attackerAttack = attacker.getAttackInBattle();
+				double opponentDefense = opponent.getDefenseInBattle();
+				double movePower = selectedMove.getMovePower();
 
+				//check if move is a special case
+				if (selectedMove.getMoveStatus())
+				{
+					String moveStatusEffect = selectedMove.getStatusType();
+					if (moveStatusEffect.equals("accuracy"))
+					{
+						opponent.setAccuracy(opponent.getAccuracy()-0.05);
+					}
+					else if (moveStatusEffect.equals("attack"))
+					{
+						opponent.setAttackInBattle(opponent.getAttackInBattle()*0.9);
+						
+					}
+					else if (moveStatusEffect.equals("defense"))
+					{
+						opponent.setDefenseInBattle(opponent.getDefenseInBattle()*0.9);
+					}
+					else if (moveStatusEffect.equals("first"))
+					{
+						damage = 2.5*(((2*attackerLevel+10)/250)*(attackerAttack/opponentDefense)*movePower+2);
+					}
+					else if (moveStatusEffect.equals("paralyze"))
+					{
+						opponent.setStatus(1); //paralyzed
+					}
+					else if (moveStatusEffect.equals("sleep"))
+					{
+						opponent.setStatus(2); //sleeping
+					}
+					else if (moveStatusEffect.equals("burn") || moveStatusEffect.equals("poison"))
+					{
+						if (random.nextDouble()<0.50) //burned or poisoned
+						{
+							opponent.setStatus(3);
+							damage = opponent.getMaxHealth()/10;
+						}
+					}
+					return damage;
+				}
 
-	 //initialize the battle crew and their stats & moves
-	 public void initBattleCrew(){
-        int NAME2 = 2;
-        Move myMove2 = new Move("Pikachu");
-        Move[] testMoves2 = myMove2.getPossibleMoves(NAME2);
-        Pokemon battle2 = new Pokemon(2, 5, testMoves2);
-        battleCrew.add(battle2);
+				damage = 2*(((2*attackerLevel+10)/250)*(attackerAttack/opponentDefense)*movePower+2);
 
-
-        int NAME3 = 3;
-        Move myMove3 = new Move("Charmander");
-        Move[] testMoves3 = myMove3.getPossibleMoves(NAME3);
-        Pokemon battle3 = new Pokemon(3, 5, testMoves3);
-        battleCrew.add(battle3);
-
-        int NAME4 = 4;
-        Move myMove4 = new Move("Meowth");
-        Move[] testMoves4 = myMove4.getPossibleMoves(NAME4);
-        Pokemon battle4 = new Pokemon(4, 5, testMoves4);
-        battleCrew.add(battle4);
-
-        int NAME5 = 5;
-        Move myMove5 = new Move("Houndour");
-        Move[] testMoves5 = myMove5.getPossibleMoves(NAME5);
-        Pokemon battle5 = new Pokemon(5, 5, testMoves5);
-        battleCrew.add(battle5);
-
-        int NAME6 = 6;
-        Move myMove6 = new Move("Koffing");
-        Move[] testMoves6 = myMove6.getPossibleMoves(NAME6);
-        Pokemon battle6 = new Pokemon(6, 5, testMoves6);
-        battleCrew.add(battle6);
-	 }
+				if (opponent.getStatus() == 3) //burned or poisoned
+				{
+					damage = damage+opponent.getMaxHealth()/10;
+				}
+			}
+		}
+		
+		return damage;
+	}
 
 }
-
-		//create an initial population of 100 eevee's
-		
-		//START OF CYCLE
-		
-		//have each pokemon "power up" (method in pokemon class)
-		
-		//send each pokemon into battle (make sure you differentiate between hybrid battles and co-evolution battles) 
-		
-		//have each pokemon calculate its fitness (method in pokemon class)
-			//record all the fitness values for later
-		
-		//PSO
-		//tell each pokemon to "move" i.e. change its probabilities (method in pokemon class)
-		
-		//SELECTION
-		//use fitness values to make a roulette wheel (pre-existing java function - google it)
-		
-		//"spin" the wheel -> an individual will be chosen, and they become parent 1
-		//remove parent 1 from the wheel (1 less individual in the wheel, so all remaining sections of the wheel get proportionally larger to keep the wheel whole)
-		//"spin" the wheel again -> an individual will be chosen, and they become parent 2
-		//remove parent 2 from the wheel
-		//these two are now a mating pair -> store them together for later
-		//continue spinning the wheel and making pairings until the wheel is empty 
-			//if there's an odd number and a single unmated individual is left, then discard it
-		
-		//CROSSOVER
-		//if a random double is below the probability 0.7, then the pair mate to create two babies
-		
-		//determine which baby gets which moves
-			//if both parents have the same move(s), then that move(s) goes to each baby
-			//for the remaining different moves, randomly assign each move to one of the babies until both babies have 3 moves and there are no parent moves remaining 
-		//determine which baby gets which probabilities
-			//random boolean - if true, baby 1 get's probability from parent 1; if false, baby 1 get's probability from parent 2 
-			//baby 2 gets whatever baby 1 doesn't get
-			//do this 3 times for the 3 different probabilities
-		//now that you have each babies' moves and probabilities, pass those values along to the "pokemon baby constructor" (method in pokemon class)
-		
-		//MUTATION
-		//take your newly constructed babies, and (with a probability of 0.01) expose them to mutation (method already in pokemon class)
-		
-		//POPULATION
-		//the new population should all be new babies
-			//do the individuals total up to 100? (initial population level)
-		//if so, great - continue on
-		//if not, select adults to add to the population using a roulette wheel
-			//"spin" the wheel -> an individual will be chosen -> remove them from the wheel and add them to the population
-			//keep selecting individual adults until the new population level equals the initial population amount
-		
-		//RESTART
-		//go back to the start of the cycle and use the newly created population of eevee's
-		//keep repeating this cycle for a set number of generations, or until a pokemon reaches level 50
-		
-		//DONE
-		//print out results: best pokemon - it's stats, probabilities, and moves
-	//}

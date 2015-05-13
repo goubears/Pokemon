@@ -1,23 +1,21 @@
 
 import java.util.*;
-import java.lang.Math;
-	 
-
 
 public class Pokemon {
 
-	private Neighborhood myNeighborhood = new Neighborhood();
+	private int MAX_LEVEL = 50;
+	private final double PSO_INCREMENT = 0.05;
 
-	private double MAX_LEVEL = 50;
-
+	//pokemon types
 	private int pokemonName;
-	final private int EEVEE = 1; //oddly enough was missing this
+	final private int EEVEE = 1; 
 	final private int PIKACHU = 2;
 	final private int CHARMANDER = 3;
 	final private int MEOWTH = 4;
 	final private int HOUNDOUR = 5;
 	final private int KOFFING = 6;
 
+	//pokemon base-status
 	private double EEVEE_START_HEALTH = 55.0;
 	private double EEVEE_END_HEALTH = 140.0;
 	private double EEVEE_HEALTH_INCREMENT = (EEVEE_END_HEALTH-EEVEE_START_HEALTH)/MAX_LEVEL;
@@ -78,52 +76,64 @@ public class Pokemon {
 	private double KOFFING_END_DEFENSE = 125.0;
 	private double KOFFING_DEFENSE_INCREMENT = (KOFFING_END_DEFENSE-KOFFING_START_DEFENSE)/MAX_LEVEL;
 
+	private int pokemonNumber;
+
+	//pokemon level variables
 	private int level;
 	private int battlesWon;
 	private int levelUpThreshold;
 
+	//pokemon status variables
 	private double health;
 	private double attack;
 	private double defense;
-
-	private boolean[] battleWinB = new boolean[5];
-	private double[] battleHP = new double[5]; 
-	private double[] battleAtt = new double[5]; 
-	private double[] battleDef = new double[5];
-
 	private double maxHealth;
 	private double maxAttack;
 	private double maxDefense;
 
+	//pokemon battle status variables
+	private int status;
+	private double accuracy;
+	private boolean[] battleWins;
+	private double[] battleHealth; 
+	private double[] battleAttack;
+	private double[] battleDefense;
+	private double healthInBattle;
+	private double attackInBattle;
+	private double defenseInBattle;
+
+	//pokemon probability variables
 	private double healthProbability;
 	private double attackProbability;
 	private double defenseProbability;
-	private double[] probabilitiesArray = new double[3];
 
-	private Move move1;
-	private Move move2;
-	private Move move3;
-	private Move[] movesArray = new Move[3];
+	//pokemon move arrays
+	private Move[] possibleMoves = new Move[6];
+	private Move[] moves = new Move[3];
 
+	//pokemon neighborhood
+	private int neighborhoodNumber;
+
+	//pokemon fitness measures
 	private double fitness;
 	private double personalBestFitness;
-	private double personalBestHealth;
-	private double personalBestAttack;
-	private double personalBestDefense;
-
-	private final double PSO_INCREMENT = 0.05;
-	private Neighborhood neighborhood = new Neighborhood();
+	private double personalBestHealthProbability;
+	private double personalBestAttackProbability;
+	private double personalBestDefenseProbability;
 
 	//random number generator
 	Random random = new Random();
 
-	//initial constructor. TO GENERATE POKEMON, CREATE INSTANCE OF MOVE myMove AND CALL Pokemon(INT_NAME, ALGORITHM, myMove.getPossibleMoves(INT_NAME)) - AMS
-	public Pokemon(int typeOfPokemon, int algorithm, Move[] possibleMoves)
+	/*
+	 * Constructor: initializes individual pokemon
+	 */
+	public Pokemon(int typeOfPokemon, int number, int threshold)
 	{
 		pokemonName = typeOfPokemon;
+		pokemonNumber = number;
 		level = 1;
 		battlesWon = 0;
-		levelUpThreshold = algorithm;
+		levelUpThreshold = threshold;
 
 		health = 0;
 		attack = 0;
@@ -133,6 +143,12 @@ public class Pokemon {
 		maxAttack = 0;
 		maxDefense = 0;
 		updateStats();
+
+		status = 0;
+		accuracy = 1.0;
+		healthInBattle = 0;
+		attackInBattle = 0;
+		defenseInBattle = 0;
 
 		//randomly choose 3 doubles between 0 and 1 -> assign those doubles to healthProbability, attackProbability, defenseProbability
 		double randomNumber = random.nextDouble();
@@ -150,56 +166,30 @@ public class Pokemon {
 		attackProbability = attackProbability/normalize;
 		defenseProbability = defenseProbability/normalize;
 
-		//randomly choose 3 DIFFERENT moves from the vector of possible moves -> assign those moves to move1, move2, move3
-		int randomInteger = random.nextInt(possibleMoves.length);
-		move1 = possibleMoves[randomInteger];
+		//randomly choose 3 DIFFERENT moves from the ArrayList of possible moves -> assign those moves to move1, move2, move3
+		possibleMoves = Move.getPossibleMoves(pokemonName);
+		moves = Move.getSelectMoves(possibleMoves, 3);
 
-		boolean moveChanged = false;
-		while (moveChanged==false)
-		{
-			randomInteger = random.nextInt(possibleMoves.length);
-			if (move1!=possibleMoves[randomInteger])
-			{
-				move2 = possibleMoves[randomInteger];
-				moveChanged = true;
-			}
-		}	
-
-		moveChanged = false;
-		while (moveChanged==false)
-		{
-			randomInteger = random.nextInt(possibleMoves.length);
-			if (move1!=possibleMoves[randomInteger] && move2!=possibleMoves[randomInteger])
-			{
-				move3 = possibleMoves[randomInteger];
-				moveChanged = true;
-			}
-		}	
-
-		//given move combo, assign to the appropriate neighborhood...
-		//neighborhood = getNeighborhood(move1, move2, move3);
+		//given move combo, assign pokemon to the appropriate neighborhood...
+		neighborhoodNumber = Neighborhood.getNeighborhoodNumber(moves, possibleMoves);
 
 		fitness = 0;
 		personalBestFitness = 0;
-
-		movesArray[0] = move1;
-		movesArray[1] = move2;
-		movesArray[2] = move3;
-
-		probabilitiesArray[0] = healthProbability;
-		probabilitiesArray[1] = attackProbability;
-		probabilitiesArray[2] = defenseProbability;
+		personalBestHealthProbability = -1;
+		personalBestAttackProbability = -1;
+		personalBestDefenseProbability = -1;
 	}
 
-	//new baby (result of crossover) constructor 
-	public Pokemon(int typeOfPokemon, int parent1Level, int parent2Level, int algorithm, 
-			double parentHealthProbability, double parentAttackProbability, double parentDefenseProbability, 
-			Move parentMove1, Move parentMove2, Move parentMove3)
+	/*
+	 * Constructor: initializes new baby pokemon 
+	 */
+	public Pokemon(int typeOfPokemon, int number, int parent1Level, int parent2Level, int threshold, double[] newProbabilities, Move[] newMoves)
 	{
 		pokemonName = typeOfPokemon;
+		pokemonNumber = number;
 		level = (parent1Level+parent2Level)/2;
 		battlesWon = 0;
-		levelUpThreshold = algorithm;
+		levelUpThreshold = threshold;
 
 		health = 0;
 		attack = 0;
@@ -210,38 +200,53 @@ public class Pokemon {
 		maxDefense = 0;
 		updateStats();
 
+		status = 0;
+		accuracy = 1.0;
+		healthInBattle = 0;
+		attackInBattle = 0;
+		defenseInBattle = 0;
+
 		//assign probabilities based on parent's probabilities
-		healthProbability = parentHealthProbability;
-		attackProbability = parentAttackProbability;
-		defenseProbability = parentDefenseProbability;
+		healthProbability = newProbabilities[0];
+		attackProbability = newProbabilities[1];
+		defenseProbability = newProbabilities[2];
 
 		double normalize = healthProbability+attackProbability+defenseProbability;
 
 		healthProbability = healthProbability/normalize;
 		attackProbability = attackProbability/normalize;
 		defenseProbability = defenseProbability/normalize;
-
+		
+		if (Double.isNaN(healthProbability)) 
+		{
+			healthProbability = 1.0/3.0;
+		}
+		if (Double.isNaN(attackProbability)) 
+		{
+			attackProbability =  1.0/3.0;
+		}
+		if (Double.isNaN(defenseProbability)) 
+		{
+			defenseProbability =  1.0/3.0;
+		}
+		
 		//assign moves based on parent's moves
-		move1 = parentMove1;
-		move2 = parentMove2;
-		move3 = parentMove3;
+		possibleMoves = Move.getPossibleMoves(pokemonName);
+		moves = newMoves;
 
-		//given move combo, assign to the appropriate neighborhood...
-		//neighborhood = getNeighborhood(move1, move2, move3);
+		//given move combo, assign pokemon to the appropriate neighborhood...
+		neighborhoodNumber = Neighborhood.getNeighborhoodNumber(moves, possibleMoves);
 
 		fitness = 0;
 		personalBestFitness = 0;
-
-
-		movesArray[0] = move1;
-		movesArray[1] = move2;
-		movesArray[2] = move3;
-
-		probabilitiesArray[0] = healthProbability;
-		probabilitiesArray[1] = attackProbability;
-		probabilitiesArray[2] = defenseProbability;
+		personalBestHealthProbability = -1;
+		personalBestAttackProbability = -1;
+		personalBestDefenseProbability = -1;
 	}
 
+	/*
+	 * Updates the status maximum levels
+	 */
 	public void updateStats()
 	{
 		switch (pokemonName)
@@ -291,13 +296,19 @@ public class Pokemon {
 	}
 
 	/*
-	 * STILL NEED TO CODE:
+	 * Initializes battle arrays 
 	 */
-	//private Neighborhood getNeighborhood(Move firstMove, Move secondMove, Move thirdMove) 
-	// {
-	// 	return null;
-	// }
+	public void initializeBattleArrays(int number) 
+	{
+		battleWins = new boolean[number];
+		battleHealth = new double[number]; 
+		battleAttack = new double[number]; 
+		battleDefense = new double[number];
+	}
 
+	/*
+	 * Updates the status levels before battles begin
+	 */
 	public void powerUp()
 	{
 		health = (maxHealth/2)*(1+healthProbability);
@@ -305,6 +316,9 @@ public class Pokemon {
 		defense = (maxDefense/2)*(1+defenseProbability);
 	}
 
+	/*
+	 * Updates the pokemon's level after battles are over
+	 */
 	public void levelUp(boolean[] battleWon)
 	{
 		for (int i=0; i<battleWon.length; i++)
@@ -317,13 +331,21 @@ public class Pokemon {
 
 		if (battlesWon>=levelUpThreshold)
 		{
-			int amount = battlesWon/levelUpThreshold;
+			int amount = battlesWon/levelUpThreshold;	
 			level = level+amount;
 			battlesWon = battlesWon%levelUpThreshold;
 			updateStats();
 		}
+		
+		if (level>=MAX_LEVEL)
+		{
+			level = MAX_LEVEL;
+		}
 	}
 
+	/*
+	 * Calculates pokemon fitness after completing battles
+	 */
 	public void calculateFitness(double[] battleHealth, double[] battleAttack, double[] battleDefense, boolean[] battleWon, double[] battleResults)
 	{
 		double sumHealth = 0;
@@ -347,46 +369,55 @@ public class Pokemon {
 		double averageAttack = (sumAttack/battleResults.length)/maxAttack;
 		double averageDefense = (sumDefense/battleResults.length)/maxDefense;
 
-		fitness = (averageHealth*averageAttack*averageDefense)+battleStrength;
+		fitness = (averageHealth*averageAttack*averageDefense)*level+battleStrength;
 
 		//update personal best if necessary 
 		if (fitness>personalBestFitness)
 		{
 			personalBestFitness = fitness;
-			personalBestHealth = healthProbability;
-			personalBestAttack = attackProbability;
-			personalBestDefense = defenseProbability;
+			personalBestHealthProbability = healthProbability;
+			personalBestAttackProbability = attackProbability;
+			personalBestDefenseProbability = defenseProbability;
 		}
 	}
 
-	public void moveProbabilities(Pokemon neighborhoodBest)
-	{
-
-
+	/*
+	 * Calculates probabilities of individual pokemon after PSO adjustments
+	 */
+	public void updateProbabilities(Pokemon neighborhoodBest)
+	{	
 		double healthAdjustment = 0;
 		double attackAdjustment = 0;
 		double defenseAdjustment = 0;
 
 		//update toward personal best
-		healthAdjustment += personalBestHealth*PSO_INCREMENT*sign(healthProbability - personalBestHealth);
-		attackAdjustment += personalBestAttack*PSO_INCREMENT*sign(attackProbability - personalBestAttack);
-		defenseAdjustment += personalBestDefense*PSO_INCREMENT*sign(defenseProbability - personalBestDefense);
+		healthAdjustment += personalBestHealthProbability*PSO_INCREMENT*sign(healthProbability - personalBestHealthProbability);
+		attackAdjustment += personalBestAttackProbability*PSO_INCREMENT*sign(attackProbability - personalBestAttackProbability);
+		defenseAdjustment += personalBestDefenseProbability*PSO_INCREMENT*sign(defenseProbability - personalBestDefenseProbability);
 
 		//update toward neighborhood best
 		healthAdjustment += neighborhoodBest.getHealthProbability()*PSO_INCREMENT*sign(healthProbability - neighborhoodBest.getHealthProbability());
 		attackAdjustment += neighborhoodBest.getAttackProbability()*PSO_INCREMENT*sign(attackProbability - neighborhoodBest.getAttackProbability());
 		defenseAdjustment += neighborhoodBest.getDefenseProbability()*PSO_INCREMENT*sign(defenseProbability - neighborhoodBest.getDefenseProbability());
-		
+
+		//"move" probabilities to new position
 		healthProbability = healthProbability+healthAdjustment;
 		attackProbability = attackProbability+attackAdjustment;
 		defenseProbability = defenseProbability+defenseAdjustment;
 
+		//can't have negative probabilities
 		if (healthProbability < 0)
+		{
 			healthProbability = 0;
+		}
 		if (attackProbability < 0)
+		{
 			attackProbability = 0;
+		}
 		if (defenseProbability < 0)
+		{
 			defenseProbability = 0;
+		}
 
 		double normalize = healthProbability+attackProbability+defenseProbability;
 
@@ -395,38 +426,37 @@ public class Pokemon {
 		defenseProbability = defenseProbability/normalize;
 	}
 
-	public void mutate(double mutationProbability, Move[] possibleMoves)
+	/*
+	 * Calculates positive/negative sign of a double
+	 */
+	public double sign(double a)
+	{
+		if (a == 0)
+		{
+			return 0.0;
+		}
+		else if (a > 0)
+		{
+			return 1.0;
+		}
+		else
+		{
+			return -1.0;	
+		}
+	}
+
+	/*
+	 * Exposes pokemon to possible move mutation and/or probability mutation
+	 */
+	public void mutate(double mutationProbability)
 	{
 		//new moveRandomDouble between 0 and 1
-		// double moveRandomDouble = random.nextDouble();
-		// if (moveRandomDouble<mutationProbability)
-		// {
-		// 	boolean moveChanged = false;
-		// 	while (moveChanged==false)
-		// 	{
-		// 		//new randomMove
-		// 		int randomMove = random.nextInt(possibleMoves.length);
-		// 		if (move1!=possibleMoves[randomMove] && move2!=possibleMoves[randomMove] && move3!=possibleMoves[randomMove])
-		// 		{
-		// 			//new randomNumber
-		// 			int randomNumber = random.nextInt(3);
-		// 			if (randomNumber==0)
-		// 			{
-		// 				move1 = possibleMoves[randomMove];
-		// 			}
-		// 			else if (randomNumber==1)
-		// 			{
-		// 				move2 = possibleMoves[randomMove];
-		// 			}
-		// 			else
-		// 			{
-		// 				move3 = possibleMoves[randomMove];
-		// 			}
-
-		// 			moveChanged = true;
-		// 		}
-		// 	}	
-		// }
+		double moveRandomDouble = random.nextDouble();
+		if (moveRandomDouble<mutationProbability)
+		{
+			moves = Move.mutateSelectMoves(moves, possibleMoves);
+			neighborhoodNumber = Neighborhood.getNeighborhoodNumber(moves, possibleMoves);
+		}
 
 		//new probabilityRandomDouble between 0 and 1
 		double probabilityRandomDouble = random.nextDouble();
@@ -435,8 +465,7 @@ public class Pokemon {
 			double change;
 
 			//new randomBoolean
-			boolean randomBoolean = random.nextBoolean();
-			if (randomBoolean)
+			if (random.nextBoolean())
 			{
 				change = 0.1;
 			}
@@ -445,19 +474,31 @@ public class Pokemon {
 				change = -0.1;
 			}
 
-			//new randomNumber: 1-3
+			//new randomNumber
 			int randomProbability = random.nextInt(3);
-			if (randomProbability==1)
+			if (randomProbability==0)
 			{
 				healthProbability = healthProbability+change;
+				if (healthProbability<0)
+				{
+					healthProbability = 0;
+				}
 			}
-			else if (randomProbability==2)
+			else if (randomProbability==1)
 			{
 				attackProbability = attackProbability+change;
+				if (attackProbability<0)
+				{
+					attackProbability = 0;
+				}
 			}
 			else
 			{
 				defenseProbability = defenseProbability+change;
+				if (defenseProbability<0)
+				{
+					defenseProbability = 0;
+				}
 			}
 
 			double normalize = healthProbability+attackProbability+defenseProbability;
@@ -468,7 +509,11 @@ public class Pokemon {
 		}
 	}
 
-	public void print(){
+	/*
+	 * Prints out pokemon variable values 
+	 */
+	public void print()
+	{
 		System.out.println("Pokemon name: " + pokemonName);
 		System.out.println("Level: " + level);
 		System.out.println("Health: " + maxHealth);
@@ -477,143 +522,280 @@ public class Pokemon {
 		System.out.println("Health probability: " + healthProbability);
 		System.out.println("Attack probability: " + attackProbability);
 		System.out.println("Defense probability: " + defenseProbability);
+		System.out.println("Move 1: " +moves[0].getNameOfMove());
+		System.out.println("Move 2: " +moves[1].getNameOfMove());
+		System.out.println("Move 3: " +moves[2].getNameOfMove());
 		System.out.println("Fitness: " + fitness);
-		System.out.println("Move 1: " + move1.getMoveName());
-		System.out.println("Move 2: " + move2.getMoveName());
-		System.out.println("Move 3: " + move3.getMoveName());
 		System.out.println();
 	}
 
-	public double sign(double a){
-
-		if (a == 0)
-			return 0.0;
-		else if (a > 0)
-			return 1.0;
-		else
-			return -1.0;
-	}
-
-	public Move getMoveOne(){
-		return move1;
-	}
-	public Move getMoveTwo(){
-		return move2;
-	}
-	public Move getMoveThree(){
-		return move3;
-	}
-	public int getLevel(){
-		return level;
-	}
-	public int getBattlesWon(){
-		return battlesWon;
-	}
-	public void setBattlesWin(int battle){
-		battlesWon = battle;
-	}
-	public double getHealth(){
-		return health;
-	}
-	public void setHealth(double hp){
-		health = hp;
-	}
-	public double getAttack(){
-		return attack;
-	}
-	public void setAttack(double att){
-		attack = att;
-	}
-	public double getDefense(){
-		return defense;
-	}
-	public void setDefense(double def){
-		defense = def;
-	}
-	public double getHealthProbability(){
-		return healthProbability;
-	}
-	public double getAttackProbability(){
-		return attackProbability;
-	}
-	public double getDefenseProbability(){
-		return defenseProbability;
-	}
-	public double getFitness(){
-		return fitness;
-	}
-	public double getPersonalBest(){
-		return personalBestFitness;
-	}
-	public int getName(){
+	/*
+	 * Getters and Setters
+	 */
+	public int getName()
+	{
 		return pokemonName;
 	}
-	public double getMaxHealth(){
+
+	public int getIDNumber()
+	{
+		return pokemonNumber;
+	}
+
+	public int getLevel()
+	{
+		return level;
+	}
+
+	public void setLevel(int newLevel)
+	{
+		level = newLevel;
+	}
+
+	public int getBattlesWon()
+	{
+		return battlesWon;
+	}
+
+	public void setBattlesWon(int battle)
+	{
+		battlesWon = battle;
+	}
+
+	public int getLevelUpThreshold()
+	{
+		return levelUpThreshold;
+	}
+
+	public int getStatus()
+	{
+		return status;
+	}
+
+	public void setStatus(int newStatus)
+	{
+		status = newStatus;
+	}
+
+	public double getAccuracy()
+	{
+		return accuracy;
+	}
+
+	public void setAccuracy(double newAccuracy)
+	{
+		accuracy = newAccuracy;
+	}
+
+	public double getHealthInBattle()
+	{
+		return healthInBattle;
+	}
+
+	public void setHealthInBattle(double newHealth)
+	{
+		healthInBattle = newHealth;
+	}
+
+	public double getAttackInBattle()
+	{
+		return attackInBattle;
+	}
+
+	public void setAttackInBattle(double newAttack)
+	{
+		attackInBattle = newAttack;
+	}
+
+	public double getDefenseInBattle()
+	{
+		return defenseInBattle;
+	}
+
+	public void setDefenseInBattle(double newDefense)
+	{
+		defenseInBattle = newDefense;
+	}
+
+	public double getHealth()
+	{
+		return health;
+	}
+
+	public double getAttack()
+	{
+		return attack;
+	}
+
+	public void setAttack(double newAttack)
+	{
+		attack = newAttack;
+	}
+
+	public double getDefense()
+	{
+		return defense;
+	}
+
+	public void setDefense(double newDefense)
+	{
+		defense = newDefense;
+	}
+
+	public double getMaxHealth()
+	{
 		return maxHealth;
 	}
-	public double getMaxAttack(){
+
+	public double getMaxAttack()
+	{
 		return maxAttack;
 	}
-	public double getMaxDefense(){
+
+	public double getMaxDefense()
+	{
 		return maxDefense;
 	}
-	public void setFitness(double fit){
-		fitness = fit;
+
+	public double getHealthProbability()
+	{
+		return healthProbability;
 	}
-	public Move[] getMovesArray(){
-		return movesArray;
+
+	public void setHealthProbability(double hProbability)
+	{
+		healthProbability = hProbability;
 	}
-	public double[] getProbabilitiesArray(){
-		return probabilitiesArray;
+
+	public double getAttackProbability()
+	{
+		return attackProbability;
 	}
-	public boolean[] getBattleWinB(){
-		return battleWinB;
+
+	public void setAttackProbability(double aProbability)
+	{
+		attackProbability = aProbability;
 	}
-	public void setBattleWinB(boolean[] battWin){
-		battleWinB = battWin.clone();
+
+	public double getDefenseProbability()
+	{
+		return defenseProbability;
 	}
-	public double[] getBattleHP(){
-		return battleHP;
+
+	public void setDefenseProbability(double dProbability)
+	{
+		defenseProbability = dProbability;
+	}
+
+	public double[] getProbabilitiesArray()
+	{
+		double[] proabilitiesArray = new double[3];
+		proabilitiesArray[0] = getHealthProbability();
+		proabilitiesArray[1] = getAttackProbability();
+		proabilitiesArray[2] = getDefenseProbability();
+		return proabilitiesArray;
+	}
+
+	public Move[] getPossibleMovesArray()
+	{
+		return possibleMoves;
+	}
+
+	public Move[] getSelectedMovesArray()
+	{
+		return moves;
+	}
+
+	public int getNeighborhoodNumber()
+	{
+		return neighborhoodNumber;
+	}
+
+	public double getFitness()
+	{
+		return fitness;
+	}
+
+	public double getPersonalBest()
+	{
+		return personalBestFitness;
+	}
+
+	public double getPersonalBestHealthProbability() 
+	{
+		return personalBestHealthProbability;
+	}
+
+	public double getPersonalBestAttackProbability() 
+	{
+		return personalBestAttackProbability;
+	}
+
+	public double getPersonalBestDefenseProbability() 
+	{
+		return personalBestDefenseProbability;
+	}
+
+
+
+	public boolean[] getBattleWin()
+	{
+		return battleWins;
+	}
+
+	public void setBattleWin(boolean[] wins)
+	{
+		battleWins = wins.clone();
+	}
+
+	public void addBattleWin(int index, boolean win)
+	{
+		battleWins[index] = win;
+	}
+
+	public double[] getBattleHealth()
+	{
+		return battleHealth;
 	} 
-	public void setBattleHP(double []temp){
-		battleHP = temp.clone();
+
+	public void setBattleHealth(double[] health)
+	{
+		battleHealth = health.clone();
 	}
-	public double[] getBattleAtt(){
-		return battleAtt;
+
+	public void addBattleHealth(int index, double health)
+	{
+		battleHealth[index] = health;
 	}
-	public void setBattleAtt(double []temp){
-		battleAtt = temp.clone();
+
+	public double[] getBattleAttack()
+	{
+		return battleAttack;
 	}
-	public double[] getBattleDef(){
-		return battleDef;
+
+	public void setBattleAttack(double[] attack)
+	{
+		battleAttack = attack.clone();
 	}
-	public void setBattleDef(double[] temp){
-		battleDef = temp.clone();
+
+	public void addBattleAttack(int index, double attack)
+	{
+		battleAttack[index] = attack;
 	}
-/*
-private int level;
-	private int battlesWon;
-	private int levelUpThreshold;
 
-	private double health;
-	private double attack;
-	private double defense;
+	public double[] getBattleDefense()
+	{
+		return battleDefense;
+	}
 
-	private double maxHealth;
-	private double maxAttack;
-	private double maxDefense;
+	public void setBattleDefense(double[] defense)
+	{
+		battleDefense = defense.clone();
+	}
 
-	private double healthProbability;
-	private double attackProbability;
-	private double defenseProbability;
+	public void addBattleDefense(int index, double defense)
+	{
+		battleDefense[index] = defense;
+	}
 
-	private Move move1;
-	private Move move2;
-	private Move move3;
-
-	//private Neighborhood neighborhood;
-
-	private double fitness;
-	private double personalBest;
-	*/
 }

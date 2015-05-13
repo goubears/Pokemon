@@ -1,31 +1,25 @@
-import java.io.*;
+
 import java.util.*;
-import java.util.Vector;
-
-
 
 public class Coevolution{
 	
-	private Vector<Pokemon> eevee1 = new Vector<Pokemon>();
-	private Vector<Pokemon> eevee2 = new Vector<Pokemon>();
+	private ArrayList<Pokemon> eevee1 = new ArrayList<Pokemon>();
+	private ArrayList<Pokemon> eevee2 = new ArrayList<Pokemon>();
 
-
-	public Coevolution(Vector<Pokemon> eev1, Vector<Pokemon> eev2){
-		eevee1 = (Vector<Pokemon>)eev1.clone();
-		eevee2 = (Vector<Pokemon>)eev2.clone();
-
-		// if((eevee1.equals(eev1)) && (eevee2.equals(eev2))){
-		// 	System.out.println("true");
-		// }
+	public Coevolution(ArrayList<Pokemon> eev1, ArrayList<Pokemon> eev2)
+	{
+		eevee1 = (ArrayList<Pokemon>)eev1.clone();
+		eevee2 = (ArrayList<Pokemon>)eev2.clone();
 	}
 
-	public Vector<Pokemon> getEevee1(){
+	public ArrayList<Pokemon> getEevee1()
+	{
 		return eevee1;
 	}
 
-	public Vector<Pokemon> getEevee2(){
+	public ArrayList<Pokemon> getEevee2()
+	{
 		return eevee2;
 	}
-
-
+	
 }

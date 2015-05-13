@@ -1,258 +1,217 @@
 
-import java.io.*;
 import java.util.*;
 
-	public class Move {
-		
-		//Variables
-		private String pokemonName;
-		private int attack;
-		private int accuracy;
-		private int identifier;
-		private String moveName;
+public class Move {
 
-        final private int EEVEE = 1;
-        final private int PIKACHU = 2;
-        final private int CHARMANDER = 3;
-        final private int MEOWTH = 4;
-        final private int HOUNDOUR = 5;
-        final private int KOFFING = 6;
+	//pokemon types
+	private static int EEVEE = 1;
+	private static int PIKACHU = 2;
+	private static int CHARMANDER = 3;
+	private static int MEOWTH = 4;
+	private static int HOUNDOUR = 5;
+	//private static int KOFFING = 6;
 
-		//Move list
-		private String[] possibleMoves = new String[6];
-		private int[] attackPower = new int[6];
-		private int[] attackHitChance = new int[6];
-		private String[] moves = new String[3];
-		private Random random = new Random();
+	//pokemon moves
+	private static Move EEVEE_SAND_ATTACK = new Move("Sand Attack", true, "accuracy", 10, 1.0);
+	private static Move EEVEE_TAIL_WHIP = new Move("Tail Whip", true, "defense", 10, 1.0);
+	private static Move EEVEE_GROWL = new Move("Growl", true, "attack", 10, 1.0);
+	private static Move EEVEE_QUICK_ATTACK = new Move("Quick Attack", true, "first", 40, 1.0);
+	private static Move EEVEE_BITE = new Move("Bite", false, "none", 60, 1.0);
+	private static Move EEVEE_TAKE_DOWN = new Move("Take Down", false, "none", 100, 0.75);
 
+	private static Move PIKACHU_GROWL = new Move("Growl", true, "attack", 10, 1.0);
+	private static Move PIKACHU_TAIL_WHIP = new Move("Tail Whip", true, "defense", 10, 1.0);
+	private static Move PIKACHU_THUNDER_WAVE = new Move("Thunder Wave", true, "paralyze", 0, 1.0);
+	private static Move PIKACHU_QUICK_ATTACK = new Move("Quick Attack", true, "first", 30, 1.0);
+	private static Move PIKACHU_THUNDER_SHOCK = new Move("Thunder Shock", false, "none", 50, 1.0);
+	private static Move PIKACHU_SLAM = new Move("Slam", false, "none", 80, 0.85);
 
-        // //used in battle
-        // public void randomMove(int name)
-        // {
-        //     String pokeName;
-        //     switch(name){
-        //         case EEVEE:
-        //             pokeName = "Eevee";
-        //         case PIKACHU:
-        //             pokeName = "Pikachu";
-        //         case CHARMANDER:
-        //             pokeName = "Charmander";
-        //         case MEOWTH:
-        //             pokeName = "Meowth";
-        //         case HOUNDOUR:
-        //             pokeName = "Houndour";
-        //         case KOFFING:
-        //             pokeName = "Koffing";
-        //         default: //error
-        //             System.out.println("Error in assigning a random move for a pokemon.");
-        //             System.exit(0);
-        //     }
+	private static Move CHARMANDER_GROWL = new Move("Growl", true, "attack", 10, 1.0);
+	private static Move CHARMANDER_LEER = new Move("Leer", true, "defense", 10, 1.0);
+	private static Move CHARMANDER_FIRE_SPIN = new Move("Fire Spin", true, "burn", 0, 1.0);
+	private static Move CHARMANDER_EMBER = new Move("Ember", false, "none", 40, 1.0);
+	private static Move CHARMANDER_SLASH = new Move("Slash", false, "none", 70, 0.85);
+	private static Move CHARMANDER_FLAMETHROWER = new Move("Flamethrower", false, "none", 90, 0.75);
 
+	private static Move MEOWTH_GROWL = new Move("Growl", true, "attack", 10, 1.0);
+	private static Move MEOWTH_SCREECH = new Move("Screech", true, "defense", 10, 1.0);
+	private static Move MEOWTH_SCRATCH = new Move("Scratch", false, "none", 40, 1.0);
+	private static Move MEOWTH_FURY_SWIPES = new Move("Fury Swipes", false, "none", 50, 0.95);
+	private static Move MEOWTH_BITE = new Move("Bite", false, "none", 60, 0.90);
+	private static Move MEOWTH_SLASH = new Move("Slash", false, "none", 70, 0.85);
 
-        //     allMoves(pokeName);
-        //     identifier = random.nextInt(3);
-        //     attack = attackPower[identifier];
-        //     accuracy = attackHitChance[identifier];
-        //     moveName = possibleMoves[identifier];               
-        // }
+	private static Move HOUNDOUR_HOWL = new Move("Howl", true, "attack", 10, 1.0);
+	private static Move HOUNDOUR_LEER = new Move("Leer", true, "defense", 10, 1.0);
+	private static Move HOUNDOUR_DARK_VOID = new Move("Dark Void", true, "sleep", 0, 0.75);
+	private static Move HOUNDOUR_BITE = new Move("Bite", false, "none", 60, 1.0);
+	private static Move HOUNDOUR_FEINT_ATTACK = new Move("Feint Attack", false, "none", 70, 0.95);
+	private static Move HOUNDOUR_CRUNCH = new Move("Crunch", false, "none", 80, 0.90);
 
-		public Move(String name)
+	private static Move KOFFING_HAZE = new Move("Haze", true, "reset", 0, 1.0);
+	private static Move KOFFING_SMOKE_SCREEN = new Move("Smoke Screen", true, "accuracy", 10, 1.0);
+	private static Move KOFFING_POISON_GAS = new Move("Poison Gas", true, "poison", 0, 1.0);
+	private static Move KOFFING_SMOG = new Move("Smog", false, "none", 30, 1.0);
+	private static Move KOFFING_TACKLE = new Move("Tackle", false, "none", 50, 0.90);
+	private static Move KOFFING_SLUDGE = new Move("Sludge", false, "none", 70, 0.80);
+
+	//move attributes
+	private String nameOfMove;
+	private boolean statusChangingMove;
+	private String typeOfStatusChange;
+	private int movePower;
+	private double moveAccuracy;
+
+	/*
+	 * Constructor: initializes the individual moves
+	 */
+	public Move(String name, boolean status, String type, int power, double accuracy)
+	{
+		nameOfMove = name;
+		statusChangingMove = status;
+		typeOfStatusChange = type;
+		movePower = power;
+		moveAccuracy = accuracy;
+	}
+
+	/*
+	 * Returns an array of possible moves given the type of pokemon
+	 */
+	public static Move[] getPossibleMoves(int nameOfPokemon)
+	{		
+		if (nameOfPokemon == EEVEE)
 		{
-			allMoves(name);
-			identifier = random.nextInt(3);  //added one becuase of neighborhood
-			attack = attackPower[identifier];
-			accuracy = attackHitChance[identifier];
-			moveName = possibleMoves[identifier];		        
+			Move[] possibleMoves = new Move[]{EEVEE_SAND_ATTACK, EEVEE_TAIL_WHIP, EEVEE_GROWL, EEVEE_QUICK_ATTACK, EEVEE_BITE, EEVEE_TAKE_DOWN};
+			return possibleMoves;
+		}
+		else if (nameOfPokemon == PIKACHU)
+		{
+			Move[] possibleMoves = new Move[]{PIKACHU_GROWL, PIKACHU_TAIL_WHIP, PIKACHU_THUNDER_WAVE, PIKACHU_QUICK_ATTACK, PIKACHU_THUNDER_SHOCK, PIKACHU_SLAM};
+			return possibleMoves;
+		}
+		else if (nameOfPokemon == CHARMANDER)
+		{
+			Move[] possibleMoves = new Move[]{CHARMANDER_GROWL, CHARMANDER_LEER, CHARMANDER_FIRE_SPIN, CHARMANDER_EMBER, CHARMANDER_SLASH, CHARMANDER_FLAMETHROWER};
+			return possibleMoves;
+		}
+		else if (nameOfPokemon == MEOWTH)
+		{
+			Move[] possibleMoves = new Move[]{MEOWTH_GROWL, MEOWTH_SCREECH, MEOWTH_SCRATCH, MEOWTH_FURY_SWIPES, MEOWTH_BITE, MEOWTH_SLASH};
+			return possibleMoves;
+		}
+		else if (nameOfPokemon == HOUNDOUR)
+		{
+			Move[] possibleMoves = new Move[]{HOUNDOUR_HOWL, HOUNDOUR_LEER, HOUNDOUR_DARK_VOID, HOUNDOUR_BITE, HOUNDOUR_FEINT_ATTACK, HOUNDOUR_CRUNCH}; 
+			return possibleMoves;
+		}
+		else //(nameOfPokemon == KOFFING)
+		{
+			Move[] possibleMoves = new Move[]{KOFFING_HAZE, KOFFING_SMOKE_SCREEN, KOFFING_POISON_GAS, KOFFING_SMOG, KOFFING_TACKLE, KOFFING_SLUDGE}; 
+			return possibleMoves;
+		}  
+	}
+
+	/*
+	 * Returns an array of selected moves for the given pokemon
+	 */
+	public static Move[] getSelectMoves(Move[] possibleMoves, int moveLimit)
+	{
+		//random number generator
+		Random random = new Random();
+
+		Move[] moves = new Move[moveLimit]; 
+
+		for (int i=0; i<moveLimit; i++)
+		{
+			while (moves[i] == null)
+			{
+				int randomMove = random.nextInt(possibleMoves.length); //select random move from possible moves
+
+				if (!Arrays.asList(moves).contains(possibleMoves[randomMove])) //don't want to duplicate moves
+				{
+					moves[i] = possibleMoves[randomMove];
+				}
+			}
 		}
 
-        public Move(int name){
+		return moves;
+	}
 
-            String nameOfPokemon;
-            //find appropriate name
-            if (name == 1){
-                allMoves("Eevee");
-                nameOfPokemon = "Eevee";
-            }
-            else if (name == 2){
-                allMoves("Pikachu");
-                nameOfPokemon = "Pikachu";
-            }
-            else if (name == 3){
-                allMoves("Charmander");
-                nameOfPokemon = "Charmander";
-            }
-            else if (name == 4){
-                allMoves("Meowth");
-                nameOfPokemon = "Meowth";
-            }
-            else if (name == 5){
-                allMoves("Houndour");
-                nameOfPokemon = "Houndour";
-            }
-            else{
-                allMoves("Koffing");
-                nameOfPokemon = "Koffing";
-            }
+	/*
+	 * Returns an array of selected moves for the given pokemon
+	 */
+	public static Move[] mutateSelectMoves(Move[] moves, Move[] possibleMoves)
+	{
+		//random number generator
+		Random random = new Random();
 
-            allMoves(nameOfPokemon);
-            identifier = random.nextInt(3);
-            attack = attackPower[identifier];
-            accuracy = attackHitChance[identifier];
-            moveName = possibleMoves[identifier];
+		//select random move from array of moves -> mutate that move
+		int randomMove = random.nextInt(moves.length); 
+		moves[randomMove] = null;
 
-        }
+		while (moves[randomMove] == null)
+		{
+			int randomNewMove = random.nextInt(possibleMoves.length); //select random move from possible moves
 
-        public Move(String name, int moveIdentifier){
+			if (!Arrays.asList(moves).contains(possibleMoves[randomNewMove])) //don't want to duplicate moves
+			{
+				moves[randomMove] = possibleMoves[randomNewMove];
+			}
+		}
 
-            allMoves(name);
-            identifier = moveIdentifier;
-            attack = attackPower[identifier];
-            accuracy = attackHitChance[identifier];
-            moveName = possibleMoves[identifier]; 
-        }
+		return moves;
+	}
 
-        public Move[] getPossibleMoves(int name){
+	/*
+	 * Getters and Setters
+	 */
+	public String getNameOfMove()
+	{
+		return nameOfMove;
+	}
 
-            String nameOfPokemon;
-            //find appropriate name
-            if (name == 1){
-                allMoves("Eevee");
-                nameOfPokemon = "Eevee";
-            }
-            else if (name == 2){
-                allMoves("Pikachu");
-                nameOfPokemon = "Pikachu";
-            }
-            else if (name == 3){
-                allMoves("Charmander");
-                nameOfPokemon = "Charmander";
-            }
-            else if (name == 4){
-                allMoves("Meowth");
-                nameOfPokemon = "Meowth";
-            }
-            else if (name == 5){
-                allMoves("Houndour");
-                nameOfPokemon = "Houndour";
-            }
-            else{
-                allMoves("Koffing");
-                nameOfPokemon = "Koffing";
-            }
+	public void setNameOfMove(String name)
+	{
+		nameOfMove = name;
+	}
 
-            Move[] possible = new Move[3];
-            //construct array of possible moves for Pokemon constructor
-            for (int i = 0; i < 3; i++){
+	public boolean getMoveStatus()
+	{
+		return statusChangingMove;
+	}
 
-                Move nextMove = new Move(nameOfPokemon, i);
-                possible[i] = nextMove;
+	public void setMoveStatus(boolean status)
+	{
+		statusChangingMove = status;
+	}
 
-            }
+	public String getStatusType()
+	{
+		return typeOfStatusChange;
+	}
 
-            return possible;  
-        }
+	public void setStatusType(String type)
+	{
+		typeOfStatusChange = type;
+	}
 
-		public void allMoves(String name){
-			pokemonName = name;
-			
-        if (pokemonName.equals("Eevee")){
-            String[] pokemonMoves = {"Quick Attack", "Bite", "Take Down", "Move4", "Move5", "Move6"};
-            possibleMoves = pokemonMoves;
-            int[] powers = {40, 60, 100};
-            attackPower = powers;
-            int[] accuracies = {100, 100, 75};
-            attackHitChance = accuracies;
+	public int getMovePower()
+	{
+		return movePower;
+	}
 
-        }
+	public void setMovePower(int power)
+	{
+		movePower = power;
+	}
 
-        if (pokemonName.equals("Pikachu")){
+	public double getMoveAccuracy()
+	{
+		return moveAccuracy;
+	}
 
-            String[] pokemonMoves = {"Quick Attack", "Thunder Shock", "Slam", "Move4", "Move5", "Move6"};
-            possibleMoves = pokemonMoves;
-            int[] powers = {30, 50, 80};
-            attackPower = powers;
-            int[] accuracies = {100, 100, 85};
-            attackHitChance = accuracies;
-        }
+	public void setMoveAccuracy(double accuracy)
+	{
+		moveAccuracy = accuracy;
+	}
 
-        if (pokemonName.equals("Charmander")){
-
-            String[] pokemonMoves = {"Ember", "Slash", "Flamethrower", "Move4", "Move5", "Move6"};
-            possibleMoves = pokemonMoves;
-            int[] powers = {40, 70, 90};
-            attackPower = powers;
-            int[] accuracies = {100, 85, 75};
-            attackHitChance = accuracies;
-        }
-
-        if (pokemonName.equals("Meowth")){
-
-            String[] pokemonMoves = {"Scratch", "Bite", "Slash", "Move4", "Move5", "Move6"};
-            possibleMoves = pokemonMoves;
-            int[] powers = {40, 60, 70};
-            attackPower = powers;
-            int[] accuracies = {100, 90, 85};
-            attackHitChance = accuracies;
-        }
-
-        if (pokemonName.equals("Houndour")){
-
- 			String[] pokemonMoves = {"Bite", "Feint Attack", "Crunch", "Move4", "Move5", "Move6"}; 
-            possibleMoves = pokemonMoves;
-            int[] powers = {60, 70, 80};
-            attackPower = powers;
-            int[] accuracies = {100, 95, 90};
-            attackHitChance = accuracies;
-        }
-
-        if (pokemonName.equals("Koffing")){
-  
-            String[] pokemonMoves = {"Smog", "Tackle", "Sludge", "Move4", "Move5", "Move6"}; 
-            possibleMoves = pokemonMoves;
-            int[] powers = {30, 50, 70};
-            attackPower = powers;
-            int[] accuracies = {100, 90, 80};
-            attackHitChance = accuracies;
-        }
-    }
-
-    public int getIdentifier(){
-        return identifier;
-    }
-
-    public void setIdentifier(int i) {
-       identifier = i;
-    }
-    
-    public int getAttack(){
-        return attack;
-    }
-
-    public void setAttack(int at){
-         attack = at;
-    }
-    
-    public int getAccuracy(){
-        return accuracy;
-    }
-
-    public void setAccuracy(int ac){
-         accuracy = ac;
-    }
-    
-    public String getPokemonName(){
-        return pokemonName;
-    }
-
-    public void setPokemonName(String pn) {
-       pokemonName = pn;
-    }
-
-    public String getMoveName(){
-        return moveName;
-    }
-
-    public void setMoveName(String mn) {
-       moveName = mn;
-    }
 }
